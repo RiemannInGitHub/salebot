@@ -4,6 +4,12 @@
 
 class Car(object):
     def __init__(self):
+        self.carname = ""
+        self.carno = 0
+        self.color = ""
+        self.prize = 0
+
+    def loadcar(self, carno):
         pass
 
 

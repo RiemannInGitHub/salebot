@@ -2,11 +2,23 @@
   <dictionary name="jackleaf">
     <words>
       <w>aiml</w>
+      <w>aimlbrain</w>
       <w>carindex</w>
+      <w>carlist</w>
+      <w>carname</w>
+      <w>carno</w>
       <w>carsale</w>
       <w>checkin</w>
       <w>cnask</w>
+      <w>currentcar</w>
+      <w>loadcar</w>
+      <w>loaduser</w>
+      <w>robotmsg</w>
+      <w>salebots</w>
+      <w>salerobot</w>
+      <w>userkey</w>
       <w>usermsg</w>
+      <w>wangye</w>
     </words>
   </dictionary>
 </component>

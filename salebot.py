@@ -1,19 +1,38 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/env python
-import consumer
 import car
+import consumer
+import aimlcov
+from third_party import aiml
 
 
 class SaleBot(object):
-    def __init__(self):
+    def __init__(self, userkey=None, carno=None):
+        # load aiml kernel
+        self.aiml = aimlcov.AimlBrain()
         self.consumer = consumer.Consumer()
         self.car = car.Car()
+        if userkey:
+            self.get_user_by_key(userkey)
+        if carno:
+            self.get_car_by_carno(carno)
 
-    def run(self):
-        pass
+    def get_user_by_key(self, userkey):
+        self.consumer.loaduser(userkey)
 
+    def get_car_by_carno(self, carno):
+        self.car.loadcar(carno)
+
+    def user_in_car(self):
+        self.consumer.currentcar(self.car)
+
+    def respond(self, inputstr):
+        return self.aiml.respond(inputstr)
 
 if __name__ == "__main__":
     # for test
-    salebot = SaleBot()
-    SaleBot.run()
+    salerobot = SaleBot()
+    while(1):
+        print(salerobot.respond(raw_input(">")))
+
+

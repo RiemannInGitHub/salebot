@@ -10,8 +10,10 @@ class AimlBrain(object):
         self.kernel.respond("load aiml cnask")
 
     def respond(self, inputstr):
-        self.kernel.respond(inputstr)
+        return self.kernel.respond(inputstr)
 
 if __name__ == "__main__":
     # for test
-    pass
+    aiml = AimlBrain()
+    while(1):
+        print(aiml.respond(raw_input(">")))

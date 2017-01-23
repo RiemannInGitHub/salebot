@@ -3,7 +3,6 @@
 import car
 import consumer
 import aimlcov
-from third_party import aiml
 
 
 class SaleBot(object):
@@ -26,13 +25,10 @@ class SaleBot(object):
     def user_in_car(self):
         self.consumer.currentcar(self.car)
 
-    def respond(self, inputstr):
-        return self.aiml.respond(inputstr)
-
 if __name__ == "__main__":
     # for test
     salerobot = SaleBot()
     while(1):
-        print(salerobot.respond(raw_input(">")))
+        print(salerobot.aiml.respond(raw_input(">")))
 
 

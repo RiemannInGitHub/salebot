@@ -1,1 +1,1 @@
-from aimlbrain import *
+from aimlbrain import AimlBrain

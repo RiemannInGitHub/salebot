@@ -6,7 +6,7 @@
 
 <!-- Load AIML set -->
 <!-- <learn>cn-profile.aiml</learn> -->
-<learn>carsale.aiml</learn>
+<learn>aimlcov/carsale.aiml</learn>
 <!-- <learn>../example1/cn-test.aiml</learn> -->
 
 </template>

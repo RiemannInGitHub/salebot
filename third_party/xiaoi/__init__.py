@@ -1,2 +1,3 @@
-__author__ = 'yeahren'
+from ibotcloud import *
 __all__ = ["IBotSignature"]
+

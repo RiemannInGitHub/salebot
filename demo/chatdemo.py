@@ -29,7 +29,7 @@ from tornado.options import define, options, parse_command_line
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-sys.path.insert(0, "../")
+sys.path.insert(0, "../third_party")
 import aiml
 
 define("port", default=8888, help="run on the given port", type=int)

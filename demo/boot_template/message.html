@@ -1,0 +1,5 @@
+<div class="message" id="m{{ message["id"] }}">{% module linkify(message["body"]) %}
+	<script>
+		document.getElementById("inbox").scrollTop = document.getElementById("inbox").scrollHeight;
+	</script>
+</div>

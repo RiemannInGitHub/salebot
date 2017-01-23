@@ -18,7 +18,7 @@ def main():
         get_car_info()
     else:
         carindex = sys.argv[1]
-        show_car_info(carindex);
+        show_car_info(carindex)
 
 if __name__ == '__main__':
     main()

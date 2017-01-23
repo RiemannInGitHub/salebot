@@ -2,7 +2,7 @@
 # !/usr/bin/env python
 
 
-class Consumer(object):
+class Output(object):
     def __init__(self):
         pass
 

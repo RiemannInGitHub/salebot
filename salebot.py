@@ -1,34 +1,58 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/env python
-import car
 import consumer
 import aimlcov
+import analyze
+from macro import *
 
 
 class SaleBot(object):
-    def __init__(self, userkey=None, carno=None):
+
+    def __init__(self, userkey=None, currentcar=None):
         # load aiml kernel
         self.aiml = aimlcov.AimlBrain()
         self.consumer = consumer.Consumer()
-        self.car = car.Car()
         if userkey:
             self.get_user_by_key(userkey)
-        if carno:
-            self.get_car_by_carno(carno)
+        if currentcar:
+            self.user_in_car(currentcar)
 
     def get_user_by_key(self, userkey):
         self.consumer.loaduser(userkey)
+        self.aiml.saveviable(USERKEY, userkey)
 
-    def get_car_by_carno(self, carno):
-        self.car.loadcar(carno)
+    def user_in_car(self, currentcar):
+        self.consumer.currentcar(currentcar)
+        self.consumer.currentcar()
 
-    def user_in_car(self):
-        self.consumer.currentcar(self.car)
+    # -------------------------------------------------------------
+    # function: receive msg from aiml to remember sth
+    # args: response -- response
+    # return:
+    # describe: aiml is an independent module, so by sendmsg to remember sth from it
+    # -------------------------------------------------------------
+    def respondanalyze(self, response):
+        return response
+
+    # -------------------------------------------------------------
+    # function: construct output for user's input
+    # args: input -- input
+    # return: output -- input
+    # describe: there are few steps for progressing
+    #           1) normalize input or transform input to robot recognise pattern
+    #           2) find direct answer from knowledge (no use temp)
+    #           3) aiml progressing
+    #           4) analyze aiml respond for robot thinking
+    # -------------------------------------------------------------
+    def respond(self, inputstr):
+        labalinput = analyze.setlabal(inputstr)
+        output = self.respondanalyze(self.aiml.respond(labalinput))
+        return output
 
 if __name__ == "__main__":
     # for test
     salerobot = SaleBot()
     while(1):
-        print(salerobot.aiml.respond(raw_input(">")))
+        print(salerobot.respond(raw_input(">")))
 
 

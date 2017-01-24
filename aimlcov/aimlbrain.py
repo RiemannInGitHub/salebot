@@ -12,6 +12,18 @@ class AimlBrain(object):
     def respond(self, inputstr):
         return self.kernel.respond(inputstr)
 
+    def saveviable(self, vianame, viavalue):
+        pass
+
+    # -------------------------------------------------------------
+    # function: send msg to aiml to talk with aiml
+    # args: msg -- msg
+    # return: output -- result
+    # describe: aiml is an independent module, so by sendmsg to let it remember or answer sth
+    # -------------------------------------------------------------
+    def sendmsg(self, msg):
+        return self.kernel.respond(msg)
+
 if __name__ == "__main__":
     # for test
     aiml = AimlBrain()

@@ -16,9 +16,8 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 sys.path.insert(0, "../")
-import aiml
+from third_party import aiml
 import salebot
-
 
 
 define("port", default=8888, help="run on the given port", type=int)
@@ -69,21 +68,7 @@ class MessageBuffer(object):
 
 # Making this a non-singleton is left as an exercise for the reader.
 global_message_buffer = MessageBuffer()
-
-
-class SigletonRobot(object):
-    __instance = None
-    Kernel = aiml.Kernel()
-    Kernel.learn("load_aiml.xml")
-    Kernel.respond("load aiml cnask")
-
-    def __init__(self):
-        pass
-
-    def __new__(cls, *args, **kwd):
-        if cls.__instance is None:
-            cls.__instance = super(SigletonRobot, cls).__new__(cls, *args, **kwd)
-        return cls.__instance
+global_robot = salebot.SaleBot()
 
 
 class MainHandler(tornado.web.RequestHandler):
@@ -92,11 +77,6 @@ class MainHandler(tornado.web.RequestHandler):
 
 
 class MessageNewHandler(tornado.web.RequestHandler):
-
-    def __init__(self, application, request, **kwargs):
-        super(MessageNewHandler, self).__init__(application, request, **kwargs)
-        # temp use cookies as userkey
-        self.salerobot = salebot.SaleBot(self.cookies)
 
     def post(self):
         conver = self.generate_conv(self.get_argument("body"))
@@ -119,7 +99,8 @@ class MessageNewHandler(tornado.web.RequestHandler):
         usermsg["html"] = tornado.escape.to_basestring(
             self.render_string("message.html", message=usermsg))
 
-        outputstr = self.salerobot.respond(inputstr)
+        global_robot.get_user_by_key(self.cookies)
+        outputstr = global_robot.aiml.respond(inputstr)
         robotmsg = {
             "id": str(uuid.uuid4()),
             "body": "Robot:" + outputstr,

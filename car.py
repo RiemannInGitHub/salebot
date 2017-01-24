@@ -8,6 +8,8 @@ class Car(object):
         self.carno = 0
         self.color = ""
         self.prize = 0
+        self.brand = ""
+        self.model = ""
 
     def loadcar(self, carno):
         pass

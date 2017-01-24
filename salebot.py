@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/env python
-import consumer
 import aimlcov
 import analyze
+import consumer
 from macro import *
 
 
@@ -15,15 +15,15 @@ class SaleBot(object):
         if userkey:
             self.get_user_by_key(userkey)
         if currentcar:
-            self.user_in_car(currentcar)
+            self.get_car_by_name(currentcar)
 
     def get_user_by_key(self, userkey):
         self.consumer.loaduser(userkey)
         self.aiml.saveviable(USERKEY, userkey)
 
-    def user_in_car(self, currentcar):
-        self.consumer.currentcar(currentcar)
-        self.consumer.currentcar()
+    def get_car_by_name(self, carname):
+        self.consumer.car.carname = carname
+        self.aiml.saveviable(CARNAME, carname)
 
     # -------------------------------------------------------------
     # function: receive msg from aiml to remember sth
@@ -45,8 +45,9 @@ class SaleBot(object):
     #           4) analyze aiml respond for robot thinking
     # -------------------------------------------------------------
     def respond(self, inputstr):
-        labalinput = analyze.setlabal(inputstr)
-        output = self.respondanalyze(self.aiml.respond(labalinput))
+        labalinput = analyze.setlabel(inputstr)
+        normalinput = analyze.normalize(labalinput)
+        output = self.respondanalyze(self.aiml.respond(normalinput))
         return output
 
 if __name__ == "__main__":

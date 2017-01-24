@@ -10,5 +10,14 @@ from macro import *
 # args: input -- inputstr
 # return: output -- input with labels
 # -------------------------------------------------------------
-def setlabel(input):
-    pass
+def setlabel(inputstr):
+    return inputstr
+
+
+# -------------------------------------------------------------
+# function: normalize inputstr
+# args: input -- inputstr
+# return: output -- normalized input
+# -------------------------------------------------------------
+def normalize(inputstr):
+    return inputstr

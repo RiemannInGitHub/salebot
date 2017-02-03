@@ -1,13 +1,19 @@
-CAR_NAME = ["长安", "奔驰", "马自达", "奥迪"]
-MODEL = ["C15", "C35", "C75"]
+# -*- coding: utf-8 -*
 
-DIALOG = {"pickonecar":"请问您想看具体哪一种型号的车？",
-          "onlyshowonecar":"不能同时看多辆车哦，屏幕一次展示一辆车。请问具体看哪一辆？",
+DICT = {'CARBRAND': [u'长安', u'奔驰', u'马自达', u'奥迪'],
+        'CARMODEL': ['C15', 'C35', 'C75'],
+        }
+
+CAR_NAME = [u'长安', u'奔驰', u'马自达', u'奥迪']
+MODEL = ['C15', 'C35', 'C75']
+
+DIALOG = {'pickonecar': u'请问您想看具体哪一种型号的车？',
+          'onlyshowonecar': u'不能同时看多辆车哦，屏幕一次展示一辆车。请问具体看哪一辆？',
           }
 
-USERNAME = "USERNAME"
-USERKEY = "USERKEY"
-CARNO = "CARNO"
-CARBRAND = "CARBRAND"
-CARMODEL = "CARMODEL"
-CARNAME = "CARNAME"
+USERNAME = 'USERNAME'
+USERKEY = 'USERKEY'
+CARNO = 'CARNO'
+CARBRAND = 'CARBRAND'
+CARMODEL = 'CARMODEL'
+CARNAME = 'CARNAME'

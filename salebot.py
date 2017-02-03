@@ -3,14 +3,16 @@
 import aimlcov
 import analyze
 import consumer
+import os
 from macro import *
 
 
 class SaleBot(object):
 
-    def __init__(self, userkey=None, currentcar=None):
+    def __init__(self, userkey=None, currentcar=None,
+                 aimlpath=os.path.split(os.path.realpath(__file__))[0] + "/aimlcov/load_aiml.xml"):
         # load aiml kernel
-        self.aiml = aimlcov.AimlBrain()
+        self.aiml = aimlcov.AimlBrain(aimlpath)
         self.consumer = consumer.Consumer()
         if userkey:
             self.get_user_by_key(userkey)
@@ -55,5 +57,6 @@ if __name__ == "__main__":
     salerobot = SaleBot()
     while(1):
         print(salerobot.respond(raw_input(">")))
+        # print(salerobot.aiml.respond(raw_input(">")))
 
 

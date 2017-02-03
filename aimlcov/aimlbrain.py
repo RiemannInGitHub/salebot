@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/env python
+import os
 from third_party import aiml
 
 
 class AimlBrain(object):
-    def __init__(self):
+    def __init__(self, aimlpath=os.path.split(os.path.realpath(__file__))[0] + "/load_aiml.xml"):
+        print(aimlpath)
         self.kernel = aiml.Kernel()
-        self.kernel.learn("load_aiml.xml")
-        self.kernel.respond("load aiml cnask")
+        self.kernel.learn(aimlpath)
+        self.kernel.respond("load aiml start")
 
     def respond(self, inputstr):
         return self.kernel.respond(inputstr)

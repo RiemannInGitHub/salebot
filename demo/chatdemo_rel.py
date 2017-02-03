@@ -16,7 +16,6 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 sys.path.insert(0, "../")
-from third_party import aiml
 import salebot
 
 
@@ -68,7 +67,7 @@ class MessageBuffer(object):
 
 # Making this a non-singleton is left as an exercise for the reader.
 global_message_buffer = MessageBuffer()
-global_robot = salebot.SaleBot()
+global_robot = salebot.SaleBot(None, None, os.path.split(os.path.realpath(__file__))[0] + "/load_aiml_demo.xml")
 
 
 class MainHandler(tornado.web.RequestHandler):

@@ -27,6 +27,17 @@ def set_label(inputstr):
 # return: output -- normalized input
 # -------------------------------------------------------------
 def normalize(inputstr):
+    fenci = jb.cut(inputstr)
+    score = {}
+    for pattern, value in PATTERN.iterms:
+        score[pattern] = 0
+        for word in fenci:
+            if word in value[0].keys():
+                score[pattern] = score[pattern] + value[0][word]
+    sorted(score.iteritems(), key=lambda d: d[1], reverse=True)
+    if score.keys()[0] > 2.5:
+        pass
+
     return inputstr
 
 if __name__ == "__main__":

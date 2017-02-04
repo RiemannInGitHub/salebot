@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/env python
 import os
+from macro import *
 from third_party import aiml
 
 
@@ -15,7 +16,9 @@ class AimlBrain(object):
         return self.kernel.respond(inputstr)
 
     def saveviable(self, vianame, viavalue):
-        pass
+        assert(vianame in AIMLVAR)
+        message = '{SAVE:' + vianame + ' is ' + viavalue
+        print(self.respond(message))
 
     # -------------------------------------------------------------
     # function: send msg to aiml to talk with aiml

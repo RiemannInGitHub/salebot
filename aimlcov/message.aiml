@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<aiml version="1.0">
+    <category>
+        <pattern>{SAVE:{carbrand:*}}</pattern>
+        <template>
+            <think>
+                <set name = "carbrand"> <star index = "1"/></set>
+            </think>
+            {MSG:OK}
+        </template>
+    </category>
+    <category>
+        <pattern>{SAVE:{carmodel:*}}</pattern>
+        <template>
+            <think>
+                <set name = "carmodel"> <star index = "1"/></set>
+            </think>
+            {MSG:OK}
+        </template>
+    </category>
+    <category>
+        <pattern>{SAVE:{userkey:*}}</pattern>
+        <template>
+            <think>
+                <set name = "userkey"> <star index = "1"/></set>
+            </think>
+            {MSG:OK}
+        </template>
+    </category>
+</aiml>

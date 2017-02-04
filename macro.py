@@ -11,9 +11,8 @@ DIALOG = {'pickonecar': u'请问您想看具体哪一种型号的车？',
           'onlyshowonecar': u'不能同时看多辆车哦，屏幕一次展示一辆车。请问具体看哪一辆？',
           }
 
-USERNAME = 'USERNAME'
-USERKEY = 'USERKEY'
-CARNO = 'CARNO'
-CARBRAND = 'CARBRAND'
-CARMODEL = 'CARMODEL'
-CARNAME = 'CARNAME'
+AIMLVAR = ['carbrand', 'carmodel', 'userkey']
+
+USERKEY = 'userkey'
+CARBRAND = 'carbrand'
+CARMODEL = 'carmodel'

@@ -4,9 +4,6 @@
 
 class Car(object):
     def __init__(self):
-        self.carname = ""
-        self.carno = 0
-        self.color = ""
         self.prize = 0
         self.brand = ""
         self.model = ""
@@ -14,6 +11,11 @@ class Car(object):
     def loadcar(self, carno):
         pass
 
+    def setbrand(self, value):
+        self.brand = value
+
+    def setmodel(self, value):
+        self.model = value
 
 if __name__ == "__main__":
     # for test

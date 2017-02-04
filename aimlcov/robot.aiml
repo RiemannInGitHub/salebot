@@ -2,6 +2,7 @@
 
 <aiml version="1.0">
 
+
 <category>
 <pattern>你好</pattern>
 <template>
@@ -115,7 +116,7 @@
 <pattern>买了</pattern>
 <template>
   谢谢，为您下订单
-  <system>python book.py</system>
+  <system>python aimlcov/book.py</system>
   下订单成功，还有什么需要帮助的么？
   <think><set name="over">1</set></think>
 </template>

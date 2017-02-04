@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<aiml version="1.0">
-    <category>
-      <pattern>看车 CARBRAND * CARMODEL *</pattern>
-      <template>MESSAGE:carbrand=<star index = "1"/>;carmodel=<star index = "2"/></template>
-    </category>
-</aiml>

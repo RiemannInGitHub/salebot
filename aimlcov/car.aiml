@@ -3,6 +3,12 @@
 <aiml version="1.0">
     <category>
       <pattern>看车 CARBRAND * CARMODEL *</pattern>
-      <template>MESSAGE:carbrand=<star index = "1"/>;carmodel=<star index = "2"/></template>
+      <template>{MESSAGE:carbrand=<star index = "1"/>;carmodel=<star index = "2"/>}
+        <random>
+            <li>好的，知道了</li>
+            <li>ok～</li>
+            <li>请问您关心它的什么呢？</li>
+        </random>
+      </template>
     </category>
 </aiml>

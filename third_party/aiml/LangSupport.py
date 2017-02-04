@@ -38,14 +38,14 @@ def splitUnicode(s):
             result.append(seg)
     return result
 
+
 def splitChinese(s):
     
     result = jb.cut(s)
     ret = '|'.join(result)
 
-    # print(ret)
-
     return ret.split("|")
+
 
 def mergeChineseSpace(s):
     assert type(s) == unicode, "string must be a unicode"

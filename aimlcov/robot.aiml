@@ -2,14 +2,6 @@
 
 <aiml version="1.0">
 
-<!-- Free software (c) 2012 andelf -->
-<!-- This program is open source code released under -->
-<!-- the terms of the GNU General Public License -->
-<!-- as published by the Free Software Foundation. -->
-
-<meta name="author" content="wangye"/>
-<meta name="language" content="CN"/>
-
 <category>
 <pattern>你好</pattern>
 <template>
@@ -84,7 +76,7 @@
 <pattern>YES</pattern>
 <that>你好，是想看辆车吗？</that>
 <template>
-  <system>python Carinfo.py</system>
+  <system>python aimlcov/Carinfo.py</system>
 </template>
 </category>
 
@@ -115,7 +107,7 @@
 <category>
 <pattern>SHOW CAR</pattern>
 <template>
-  <system>python Carinfo.py <get name="carindex"/></system>
+  <system>python aimlcov/Carinfo.py <get name="carindex"/></system>
 </template>
 </category>
 
@@ -194,7 +186,7 @@
 <category>
 <pattern>*</pattern>
 <template>
-<system>python xiaoi.py <star/></system>
+<system>python aimlcov/xiaoibot.py <star/></system>
 <!--
 <random>
     <li>你说的什么我不懂</li>

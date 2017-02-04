@@ -290,6 +290,7 @@ class Kernel:
         will be loaded and learned.
 
         """
+        print(filename)
         for f in glob.glob(filename):
             if self._verboseMode: print "Loading %s..." % f,
             start = time.clock()
@@ -396,7 +397,7 @@ class Kernel:
         except IndexError: that = ""
 
         # 将历史输出内容根据中文分词
-        # that = u' '.join(splitChinese(that))
+        that = u' '.join(splitChinese(that))
 
         subbedThat = self._subbers['normal'].sub(that)
 

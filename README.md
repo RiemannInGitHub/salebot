@@ -1,3 +1,3 @@
 # salebot
 
-##wangye's working dir
+##wangye's dir

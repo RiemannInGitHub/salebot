@@ -13,7 +13,7 @@ from macro import *
 class SaleBot(object):
     def __init__(self, userkey=None, currentcar=None,
                  aimlpath=os.path.split(os.path.realpath(__file__))[0] + "/aimlcov/load_aiml.xml"):
-        self.aiml = aimlcov.AimlBrain(aimlpath)
+        self.__aiml = aimlcov.AimlBrain(aimlpath)
         self.consumer = consumer.Consumer()
         self.car = car.Car()
         if userkey:
@@ -21,24 +21,24 @@ class SaleBot(object):
 
         self.msgregex = re.compile('\{.+\}')
         self.msgfunclist = {
-            'SET':      self.msgsethandle,
-            'QUERY':    self.msgqueryhandle,
+            'SET':      self.msg_set_handle,
+            'QUERY':    self.msg_query_handle,
         }
         self.msgdict = {
-            'carbrand': self.car.setbrand,
-            'carmodel': self.car.setmodel,
+            'carbrand': self.car.set_brand,
+            'carmodel': self.car.set_model,
         }
 
     def get_user_by_key(self, userkey):
-        self.consumer.loaduser(userkey)
-        self.aiml.saveviable(USERKEY, userkey)
+        self.consumer.load_user(userkey)
+        # self.aiml.save_viable(USERKEY, userkey)
 
-    def msgsethandle(self, msg):
+    def msg_set_handle(self, msg):
         for k, v in msg.items():
             handler = self.msgdict[k]
             handler(v)
 
-    def msgqueryhandle(self, msg):
+    def msg_query_handle(self, msg):
         pass
 
     # -------------------------------------------------------------
@@ -47,7 +47,7 @@ class SaleBot(object):
     # return:
     # describe: aiml is an independent module, so by sendmsg to remember sth from it
     # -------------------------------------------------------------
-    def respondanalyze(self, response):
+    def respond_analyze(self, response):
         m = self.msgregex.match(response)
         output = ""
 
@@ -77,9 +77,9 @@ class SaleBot(object):
     # -------------------------------------------------------------
     def respond(self, inputstr):
 
-        labalinput = analyze.setlabel(inputstr)
+        labalinput = analyze.set_label(inputstr)
         normalinput = analyze.normalize(labalinput)
-        output = self.respondanalyze(self.aiml.respond(normalinput))
+        output = self.respond_analyze(self.__aiml.respond(normalinput))
 
         return output
 
@@ -88,6 +88,5 @@ if __name__ == "__main__":
     salerobot = SaleBot()
     while(1):
         print(salerobot.respond(raw_input(">")))
-        # print(salerobot.aiml.respond(raw_input(">")))
 
 

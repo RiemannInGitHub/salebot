@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import jieba as jb
-import sys
-sys.path.insert(0, "../")
 from macro import *
 
 
@@ -12,7 +10,7 @@ from macro import *
 # args: input -- inputstr eg: "长安c15"
 # return: output -- input with labels eg: "carbrand长安<carmodel>c15"
 # -------------------------------------------------------------
-def setlabel(inputstr):
+def set_label(inputstr):
     output = ""
     result = jb.cut(inputstr)
     for word in result:
@@ -34,4 +32,4 @@ def normalize(inputstr):
 if __name__ == "__main__":
     # for test
     while(1):
-        print(setlabel(raw_input(">")))
+        print(set_label(raw_input(">")))

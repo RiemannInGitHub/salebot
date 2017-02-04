@@ -8,13 +8,13 @@ class Car(object):
         self.brand = ""
         self.model = ""
 
-    def loadcar(self, carno):
+    def load_car(self, carno):
         pass
 
-    def setbrand(self, value):
+    def set_brand(self, value):
         self.brand = value
 
-    def setmodel(self, value):
+    def set_model(self, value):
         self.model = value
 
 if __name__ == "__main__":

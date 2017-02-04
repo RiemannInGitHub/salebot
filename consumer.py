@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/env python
-import car
 
 
 class Consumer(object):
@@ -9,7 +8,7 @@ class Consumer(object):
         self.userkey = ""
         self.carlist = []
 
-    def loaduser(self, userkey):
+    def load_user(self, userkey):
         self.userkey = userkey
 
 if __name__ == "__main__":

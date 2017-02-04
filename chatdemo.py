@@ -61,7 +61,7 @@ class MessageBuffer(object):
         if len(self.cache) > self.cache_size:
             self.cache = self.cache[-self.cache_size:]
 
-    def clearcache(self):
+    def clear_cache(self):
         self.cache = []
 
 
@@ -98,8 +98,8 @@ class MessageNewHandler(tornado.web.RequestHandler):
         usermsg["html"] = tornado.escape.to_basestring(
             self.render_string("message.html", message=usermsg))
 
-        global_robot.get_user_by_key(self.cookies)
-        outputstr = global_robot.aiml.respond(inputstr)
+        global_robot.get_user_by_key(self.cookies.output())
+        outputstr = global_robot.respond(inputstr)
         robotmsg = {
             "id": str(uuid.uuid4()),
             "body": "Robot:" + outputstr,
@@ -128,7 +128,7 @@ class MessageUpdatesHandler(tornado.web.RequestHandler):
 
 class MessageClearcachHandler(tornado.web.RequestHandler):
     def get(self):
-        global_message_buffer.clearcache();
+        global_message_buffer.clear_cache()
 
 
 def main():

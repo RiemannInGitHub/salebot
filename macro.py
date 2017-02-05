@@ -1,24 +1,26 @@
 # -*- coding: utf-8 -*
 
 DICT = {
-    'CARBRAND': [u'长安', u'奔驰', u'马自达', u'奥迪'],
-    'CARMODEL': ['C15', 'C35', 'C75'],
+    u'CARBRAND': [u'长安', u'奔驰', u'马自达', u'奥迪'],
+    u'CARMODEL': [u'C15', u'C35', u'C75'],
 }
 
 CAR_NAME = [u'长安', u'奔驰', u'马自达', u'奥迪']
-MODEL = ['C15', 'C35', 'C75']
+MODEL = [u'C15', u'C35', u'C75']
 
 DIALOG = {
-    'pickonecar': u'请问您想看具体哪一种型号的车？',
-    'onlyshowonecar': u'不能同时看多辆车哦，屏幕一次展示一辆车。请问具体看哪一辆？',
+    u'pickonecar': u'请问您想看具体哪一种型号的车？',
+    u'onlyshowonecar': u'不能同时看多辆车哦，屏幕一次展示一辆车。请问具体看哪一辆？',
 }
 
-AIMLVAR = ['carbrand', 'carmodel', 'userkey']
+AIMLVAR = [u'carbrand', u'carmodel', u'userkey']
 
-USERKEY = 'userkey'
-CARBRAND = 'carbrand'
-CARMODEL = 'carmodel'
+USERKEY = u'userkey'
+CARBRAND = u'carbrand'
+CARMODEL = u'carmodel'
 
 PATTERN = {
-    '看车': [{'CARBRAND': 1, 'CARMODEL': 1, '看': 0.3, '我': 0.3, '怎么样': 0.3}, ['看车', 'CARBRAND', 'CARMODEL']]
+    u'看车': [{u'CARBRAND': 1, u'CARMODEL': 1, u'看': 0.3, u'我': 0.3, u'怎么样': 0.3}, [u'看车', u'CARBRAND', u'CARMODEL']]
 }
+
+PTTHRESHOLD = 2.2

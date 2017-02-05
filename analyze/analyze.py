@@ -29,18 +29,40 @@ def set_label(inputstr):
 def normalize(inputstr):
     fenci = jb.cut(inputstr)
     score = {}
-    for pattern, value in PATTERN.iterms:
+    labels = {}
+    outputl = []
+    outputstr = ""
+
+    for pattern, value in PATTERN.iteritems():
         score[pattern] = 0
         for word in fenci:
             if word in value[0].keys():
                 score[pattern] = score[pattern] + value[0][word]
-    sorted(score.iteritems(), key=lambda d: d[1], reverse=True)
-    if score.keys()[0] > 2.5:
-        pass
+            if word in DICT.keys():
+                for w in fenci:
+                    if w != ' ':
+                        labels[word] = w
+                        break
 
-    return inputstr
+    sorted(score.iteritems(), key=lambda d: d[1], reverse=True)
+
+    k = score.keys()[0]
+    v = score[k]
+    if v > PTTHRESHOLD:
+        for word in PATTERN[k][1]:
+            if word in labels.keys():
+                outputl.append(word)
+                outputl.append(labels[word])
+            else:
+                outputl.append(word)
+        outputstr = " ".join(outputl)
+    else:
+        outputstr = inputstr
+
+    return outputstr
 
 if __name__ == "__main__":
     # for test
     while(1):
-        print(set_label(raw_input(">")))
+        print(normalize(raw_input(">")))
+

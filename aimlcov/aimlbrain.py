@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/env python
 import os
+from macro import *
 from third_party import aiml
 
 
@@ -14,8 +15,10 @@ class AimlBrain(object):
     def respond(self, inputstr):
         return self.kernel.respond(inputstr)
 
-    def saveviable(self, vianame, viavalue):
-        pass
+    def save_viable(self, vianame, viavalue):
+        assert(vianame in AIMLVAR)
+        message = '{SAVE:' + vianame + ' is ' + viavalue
+        print(self.respond(message))
 
     # -------------------------------------------------------------
     # function: send msg to aiml to talk with aiml
@@ -23,7 +26,7 @@ class AimlBrain(object):
     # return: output -- result
     # describe: aiml is an independent module, so by sendmsg to let it remember or answer sth
     # -------------------------------------------------------------
-    def sendmsg(self, msg):
+    def send_msg(self, msg):
         return self.kernel.respond(msg)
 
 if __name__ == "__main__":

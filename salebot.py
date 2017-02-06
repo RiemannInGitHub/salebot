@@ -3,29 +3,44 @@
 import aimlcov
 import analyze
 import consumer
+import car
 import os
+import json
+import re
 from macro import *
 
 
 class SaleBot(object):
-
     def __init__(self, userkey=None, currentcar=None,
                  aimlpath=os.path.split(os.path.realpath(__file__))[0] + "/aimlcov/load_aiml.xml"):
-        # load aiml kernel
-        self.aiml = aimlcov.AimlBrain(aimlpath)
+        self.__aiml = aimlcov.AimlBrain(aimlpath)
         self.consumer = consumer.Consumer()
+        self.car = car.Car()
         if userkey:
             self.get_user_by_key(userkey)
-        if currentcar:
-            self.get_car_by_name(currentcar)
+
+        self.msgregex = re.compile('\{.+\}')
+        self.msgfunclist = {
+            'SET':      self.msg_set_handle,
+            'QUERY':    self.msg_query_handle,
+        }
+        self.msgdict = {
+            'carbrand': self.car.set_brand,
+            'carmodel': self.car.set_model,
+        }
 
     def get_user_by_key(self, userkey):
-        self.consumer.loaduser(userkey)
-        self.aiml.saveviable(USERKEY, userkey)
+        self.consumer.load_user(userkey)
+        # self.aiml.save_viable(USERKEY, userkey)
 
-    def get_car_by_name(self, carname):
-        self.consumer.car.carname = carname
-        self.aiml.saveviable(CARNAME, carname)
+    def msg_set_handle(self, msg):
+        for k, v in msg.items():
+            handler = self.msgdict[k]
+            handler(v)
+
+    # can't use yet. the api is not available
+    def msg_query_handle(self, msg):
+        pass
 
     # -------------------------------------------------------------
     # function: receive msg from aiml to remember sth
@@ -33,8 +48,23 @@ class SaleBot(object):
     # return:
     # describe: aiml is an independent module, so by sendmsg to remember sth from it
     # -------------------------------------------------------------
-    def respondanalyze(self, response):
-        return response
+    def respond_analyze(self, response):
+        m = self.msgregex.match(response)
+        output = ""
+
+        if m is not None:
+            text = response[m.end():]
+            string = m.group()
+            msg = json.loads(string)
+            for msgtype in msg.keys():
+                handlefunc = self.msgfunclist[msgtype]
+                output = handlefunc(msg[msgtype])
+                if output is None:
+                    output = text
+        else:
+            output = response
+
+        return output
 
     # -------------------------------------------------------------
     # function: construct output for user's input
@@ -47,9 +77,11 @@ class SaleBot(object):
     #           4) analyze aiml respond for robot thinking
     # -------------------------------------------------------------
     def respond(self, inputstr):
-        labalinput = analyze.setlabel(inputstr)
+
+        labalinput = analyze.set_label(inputstr)
         normalinput = analyze.normalize(labalinput)
-        output = self.respondanalyze(self.aiml.respond(normalinput))
+        output = self.respond_analyze(self.__aiml.respond(normalinput))
+
         return output
 
 if __name__ == "__main__":
@@ -57,6 +89,5 @@ if __name__ == "__main__":
     salerobot = SaleBot()
     while(1):
         print(salerobot.respond(raw_input(">")))
-        # print(salerobot.aiml.respond(raw_input(">")))
 
 

@@ -38,6 +38,7 @@ class SaleBot(object):
             handler = self.msgdict[k]
             handler(v)
 
+    # can't use yet. the api is not available
     def msg_query_handle(self, msg):
         pass
 

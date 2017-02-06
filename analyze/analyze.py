@@ -31,7 +31,6 @@ def normalize(inputstr):
     score = {}
     labels = {}
     outputl = []
-    outputstr = ""
 
     for pattern, value in PATTERN.iteritems():
         score[pattern] = 0

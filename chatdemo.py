@@ -98,7 +98,6 @@ class MessageNewHandler(tornado.web.RequestHandler):
         usermsg["html"] = tornado.escape.to_basestring(
             self.render_string("message.html", message=usermsg))
 
-        global_robot.get_user_by_key(self.cookies.output())
         outputstr = global_robot.respond(inputstr)
         robotmsg = {
             "id": str(uuid.uuid4()),

@@ -2,7 +2,7 @@
 # !/usr/bin/env python
 import aimlcov
 import analyze
-import consumer
+import knowledge
 import car
 import os
 import json
@@ -14,33 +14,81 @@ class SaleBot(object):
     def __init__(self, userkey=None, currentcar=None,
                  aimlpath=os.path.split(os.path.realpath(__file__))[0] + "/aimlcov/load_aiml.xml"):
         self.__aiml = aimlcov.AimlBrain(aimlpath)
-        self.consumer = consumer.Consumer()
+        self.username = ""
+        self.userkey = userkey
+        self.carlist = []
         self.car = car.Car()
-        if userkey:
-            self.get_user_by_key(userkey)
-
+        self.database = knowledge.Database()
+        self.consernarg = []
         self.msgregex = re.compile('\{.+\}')
         self.msgfunclist = {
-            'SET':      self.msg_set_handle,
-            'QUERY':    self.msg_query_handle,
+            u'SET':      self.msg_set_handle,
+            u'QUERY':    self.msg_query_handle,
+            u'DBSEARCH': self.msg_dbsearch_handle,
         }
-        self.msgdict = {
-            'carbrand': self.car.set_brand,
-            'carmodel': self.car.set_model,
-        }
-
-    def get_user_by_key(self, userkey):
-        self.consumer.load_user(userkey)
-        # self.aiml.save_viable(USERKEY, userkey)
 
     def msg_set_handle(self, msg):
-        for k, v in msg.items():
-            handler = self.msgdict[k]
-            handler(v)
+        for label, value in msg.items():
+            self.car.parad[label] = value
 
-    # can't use yet. the api is not available
-    def msg_query_handle(self, msg):
-        pass
+    def msg_query_handle(self, key):
+        lenth, value = self.database.get_label_value(key)
+        if 0 == lenth:
+            raise "msg_query_handle: something goes wrong, the dbresult is NULL"
+        elif 1 == lenth:
+            vialist = [key, value]
+            self.__aiml.respond_with_viable(vialist, DIALOG[QUERYFIN])
+        elif 1 < lenth:
+            if PRICE == key:
+                pass
+
+    def gen_consernarg(self, label):
+        if len(self.consernarg) != 0:
+            return
+        if CARBRAND == label:
+            self.consernarg = ARGORDER[0]
+        elif CARNAME == label:
+            self.consernarg = ARGORDER[0]
+        elif CARMODEL == label:
+            self.consernarg = ARGORDER[0]
+        elif PRICE == label:
+            self.consernarg = ARGORDER[1]
+        elif TYPE == label:
+            self.consernarg = ARGORDER[1]
+        elif SEATS == label:
+            self.consernarg = ARGORDER[1]
+
+    def set_car_para(self, label, value):
+        self.car.parad[label] = value
+
+    def query_car_db(self):
+        self.database.query_by_condition(self.car.parad)
+
+    def process_consernarg(self):
+        for k in self.consernarg:
+            lenth, value = self.database.get_label_value(k)
+            if 0 == lenth:
+                raise "process_consernarg: something goes wrong, the dbresult is NULL"
+            if PRICE == k or MODEL == k:
+                if lenth < 5:
+                    self.set_car_para(k, value[0])
+                    self.consernarg.remove(k)
+            elif 1 == lenth:
+                self.set_car_para(k, value[0])
+                self.consernarg.remove(k)
+
+    def msg_dbsearch_handle(self, msg):
+        for label, value in msg.items():
+            if value != "":
+                self.gen_consernarg(label)
+                self.set_car_para(label, value)
+                self.__aiml.save_viable(label, value)
+        self.query_car_db()
+        self.process_consernarg()
+        if 0 == len(self.consernarg):
+            return self.__aiml.respond(DIALOG[SEARCHFIN])
+        keyword = self.consernarg[0]
+        return self.__aiml.respond(DIALOG[keyword])
 
     # -------------------------------------------------------------
     # function: receive msg from aiml to remember sth
@@ -77,12 +125,10 @@ class SaleBot(object):
     #           4) analyze aiml respond for robot thinking
     # -------------------------------------------------------------
     def respond(self, inputstr):
+        labelinput = analyze.set_label(inputstr)
+        normalinput = analyze.normalize(labelinput)
+        return self.respond_analyze(self.__aiml.respond(normalinput))
 
-        labalinput = analyze.set_label(inputstr)
-        normalinput = analyze.normalize(labalinput)
-        output = self.respond_analyze(self.__aiml.respond(normalinput))
-
-        return output
 
 if __name__ == "__main__":
     # for test

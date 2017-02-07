@@ -14,7 +14,7 @@ def set_label(inputstr):
     output = ""
     result = jb.cut(inputstr)
     for word in result:
-        label = [k for k, v in DICT.iteritems() if word in v]
+        label = [k for k, v in KEYDICT.iteritems() if word in v]
         if len(label) != 0:
             output = output + ' ' + label.pop() + ' '
         output = output + word
@@ -37,7 +37,7 @@ def normalize(inputstr):
         for word in fenci:
             if word in value[0].keys():
                 score[pattern] = score[pattern] + value[0][word]
-            if word in DICT.keys():
+            if word in KEYDICT.keys():
                 for w in fenci:
                     if w != ' ':
                         labels[word] = w

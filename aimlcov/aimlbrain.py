@@ -15,6 +15,11 @@ class AimlBrain(object):
     def respond(self, inputstr):
         return self.kernel.respond(inputstr)
 
+    def respond_with_viable(self, vialist, inputstr):
+        for i in vialist:
+            inputstr.replace('*', i, 1)
+        return self.kernel.respond(inputstr)
+
     def save_viable(self, vianame, viavalue):
         assert(vianame in AIMLVAR)
         message = '{SAVE:' + vianame + ' is ' + viavalue

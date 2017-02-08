@@ -20,9 +20,10 @@ class SaleBot(object):
         self.username = ""
         self.userkey = userkey
         self.carlist = []
-        self.car = car.Car()
         self.database = database.Database()
         self.analyze = analyze.Analyze(self.database.generate_attrdict())
+        self.attrlist = self.database.generate_attrlist()
+        self.car = car.Car(self.attrlist)
         self.consernarg = []
         self.msgregex = re.compile('\{.+\}')
         self.msgfunclist = {

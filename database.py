@@ -28,6 +28,11 @@ class Database(object):
         dfdict = df.to_dict()
         return dfdict
 
+    @staticmethod
+    def generate_attrlist():
+        df = pd.read_json(testdb)
+        return df.columns.values
+
     # flag-true query from result, flag-false query from cardb
     # TODO: if api return db less than 100, get all of it; else keep ask user add more condition
     def query_by_condition(self, condition, flag):

@@ -4,10 +4,11 @@ from macro import *
 
 
 class Car(object):
-    def __init__(self):
+    def __init__(self, attrlist):
         self.prize = 0
-        self.parad = {CARBRAND: "", CARNAME: "", CARMODEL: "", PRICE: "", TYPE: "", SEATS: "",
-                      ENGINE: "", GEARBOX: "", OILCONSUMPTION: "", ROZ: ""}
+        self.parad = {}
+        for i in attrlist:
+            self.parad[i] = ""
 
     def load_car(self, carno):
         pass

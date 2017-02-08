@@ -187,7 +187,7 @@
 <category>
 <pattern>*</pattern>
 <template>
-<system>python aimlcov/xiaoibot.py <star/></system>
+<system>python aimlcov/tuling.py <star/></system>
 <!--
 <random>
     <li>你说的什么我不懂</li>

@@ -2,12 +2,15 @@
 # !/usr/bin/env python
 import aimlcov
 import analyze
-import knowledge
+import database
 import car
 import os
 import json
 import re
 from macro import *
+from util import log
+
+logger = log.get_logger(__name__)
 
 
 class SaleBot(object):
@@ -18,7 +21,7 @@ class SaleBot(object):
         self.userkey = userkey
         self.carlist = []
         self.car = car.Car()
-        self.database = knowledge.Database()
+        self.database = database.Database()
         self.consernarg = []
         self.msgregex = re.compile('\{.+\}')
         self.msgfunclist = {
@@ -26,6 +29,7 @@ class SaleBot(object):
             u'QUERY':    self.msg_query_handle,
             u'DBSEARCH': self.msg_dbsearch_handle,
         }
+        logger.info("salebot start")
 
     def msg_set_handle(self, msg):
         for label, value in msg.items():
@@ -34,7 +38,7 @@ class SaleBot(object):
     def msg_query_handle(self, key):
         lenth, value = self.database.get_label_value(key)
         if 0 == lenth:
-            raise "msg_query_handle: something goes wrong, the dbresult is NULL"
+            raise ValueError
         elif 1 == lenth:
             vialist = [key, value]
             self.__aiml.respond_with_viable(vialist, DIALOG[QUERYFIN])
@@ -68,7 +72,7 @@ class SaleBot(object):
         for k in self.consernarg:
             lenth, value = self.database.get_label_value(k)
             if 0 == lenth:
-                raise "process_consernarg: something goes wrong, the dbresult is NULL"
+                raise ValueError
             if PRICE == k or MODEL == k:
                 if lenth < 5:
                     self.set_car_para(k, value[0])
@@ -106,12 +110,17 @@ class SaleBot(object):
             msg = json.loads(string)
             for msgtype in msg.keys():
                 handlefunc = self.msgfunclist[msgtype]
-                output = handlefunc(msg[msgtype])
-                if output is None:
-                    output = text
+                try:
+                    output = handlefunc(msg[msgtype])
+                except ValueError:
+                    logger.error("the database result is NULL, sth wrong happened")
+                else:
+                    if output is None:
+                        output = text
         else:
             output = response
 
+        logger.info("output is:" + output)
         return output
 
     # -------------------------------------------------------------
@@ -125,8 +134,14 @@ class SaleBot(object):
     #           4) analyze aiml respond for robot thinking
     # -------------------------------------------------------------
     def respond(self, inputstr):
+
+        logger.info("input is:" + inputstr)
+
         labelinput = analyze.set_label(inputstr)
+        logger.debug("input with label is:" + labelinput)
+
         normalinput = analyze.normalize(labelinput)
+        logger.debug("normalized input is:" + normalinput)
         return self.respond_analyze(self.__aiml.respond(normalinput))
 
 

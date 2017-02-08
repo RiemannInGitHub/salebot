@@ -4,9 +4,16 @@
 import json
 import requests
 import sys
+import os
+
+sys.path.insert(0, os.path.split(os.path.realpath(__file__))[0] + "/..")
+from util import log
 
 reload(sys)
 sys.setdefaultencoding('utf8')
+
+
+logger = log.get_logger(__name__)
 
 
 class TulingBot(object):
@@ -35,9 +42,10 @@ class TulingBot(object):
                 result = respond['text'].replace('<br>', '  ')
                 result = result.replace(u'\xa0', u' ')
 
-            # print '    ROBOT:', result
+            logger.debug("use tulingbot, answer:" + result)
             return result
         else:
+            logger.error("use tulingbot, the tuling key is missing")
             return u"知道啦"
 
 

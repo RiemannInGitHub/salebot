@@ -18,8 +18,6 @@ sys.setdefaultencoding('utf8')
 sys.path.insert(0, "../")
 import salebot
 
-logger = log.get_logger(__name__)
-
 define("port", default=8888, help="run on the given port", type=int)
 define("debug", default=True, help="run in debug mode")
 

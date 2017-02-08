@@ -22,6 +22,7 @@ class SaleBot(object):
         self.carlist = []
         self.car = car.Car()
         self.database = database.Database()
+        self.analyze = analyze.Analyze(self.database.generate_attrdict())
         self.consernarg = []
         self.msgregex = re.compile('\{.+\}')
         self.msgfunclist = {
@@ -65,15 +66,12 @@ class SaleBot(object):
     def set_car_para(self, label, value):
         self.car.parad[label] = value
 
-    def query_car_db(self):
-        self.database.query_by_condition(self.car.parad)
-
     def process_consernarg(self):
         for k in self.consernarg:
             lenth, value = self.database.get_label_value(k)
             if 0 == lenth:
                 raise ValueError
-            if PRICE == k or MODEL == k:
+            if PRICE == k or CARMODEL == k:
                 if lenth < 5:
                     self.set_car_para(k, value[0])
                     self.consernarg.remove(k)
@@ -87,7 +85,7 @@ class SaleBot(object):
                 self.gen_consernarg(label)
                 self.set_car_para(label, value)
                 self.__aiml.save_viable(label, value)
-        self.query_car_db()
+        self.database.query_by_condition(self.car.parad, False)
         self.process_consernarg()
         if 0 == len(self.consernarg):
             return self.__aiml.respond(DIALOG[SEARCHFIN])
@@ -120,7 +118,7 @@ class SaleBot(object):
         else:
             output = response
 
-        logger.info("output is:" + output)
+        logger.info("output:" + output)
         return output
 
     # -------------------------------------------------------------
@@ -135,13 +133,13 @@ class SaleBot(object):
     # -------------------------------------------------------------
     def respond(self, inputstr):
 
-        logger.info("input is:" + inputstr)
+        logger.info("input:" + inputstr)
 
-        labelinput = analyze.set_label(inputstr)
-        logger.debug("input with label is:" + labelinput)
+        labelinput = self.analyze.set_label(inputstr)
+        logger.debug("input with label:" + labelinput)
 
-        normalinput = analyze.normalize(labelinput)
-        logger.debug("normalized input is:" + normalinput)
+        normalinput = self.analyze.normalize(labelinput)
+        logger.debug("normalized input:" + normalinput)
         return self.respond_analyze(self.__aiml.respond(normalinput))
 
 

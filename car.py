@@ -6,7 +6,8 @@ from macro import *
 class Car(object):
     def __init__(self):
         self.prize = 0
-        self.parad = {CARBRAND: "", CARNAME: "", CARMODEL: "", PRICE: "", TYPE: "", SEATS: ""}
+        self.parad = {CARBRAND: "", CARNAME: "", CARMODEL: "", PRICE: "", TYPE: "", SEATS: "",
+                      ENGINE: "", GEARBOX: "", OILCONSUMPTION: "", ROZ: ""}
 
     def load_car(self, carno):
         pass

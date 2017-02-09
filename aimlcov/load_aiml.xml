@@ -8,6 +8,7 @@
     <learn>aimlcov/message.aiml</learn>
     <learn>aimlcov/car.aiml</learn>
     <learn>aimlcov/robot.aiml</learn>
+    <!-- <learn>aimlcov/demo.aiml</learn> -->
 
 
 </template>

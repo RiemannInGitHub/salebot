@@ -33,7 +33,6 @@ class SaleBot(object):
             "QUERY":    self.msg_query_handle,
             "DBSEARCH": self.msg_dbsearch_handle,
             "TULING":   self.msg_tuling_handle,
-
         }
         logger.info("salebot start")
 
@@ -56,8 +55,11 @@ class SaleBot(object):
         return 'tl' + self.tuling.tuling_auto_reply(msg)
 
     def gen_consernarg(self, label):
+        flag = False
+
         if len(self.consernarg) != 0:
-            return
+            return flag
+        flag = True
         if CARBRAND == label:
             self.consernarg = ARGORDER[0]
         elif CARNAME == label:
@@ -70,6 +72,8 @@ class SaleBot(object):
             self.consernarg = ARGORDER[1]
         elif SEATS == label:
             self.consernarg = ARGORDER[1]
+
+        return flag
 
     def set_car_para(self, label, value):
         self.car.parad[label] = value
@@ -88,15 +92,19 @@ class SaleBot(object):
                 self.consernarg.remove(k)
 
     def msg_dbsearch_handle(self, msg):
+        flag = False
+
         for label, value in msg.items():
             if value != "":
-                self.gen_consernarg(label)
+                flag = self.gen_consernarg(label)
                 self.set_car_para(label, value)
                 self.__aiml.save_viable(label, value)
-        self.database.query_by_condition(self.car.parad, False)
+        self.database.query_by_condition(self.car.parad, flag)
         self.process_consernarg()
+
         if 0 == len(self.consernarg):
             return self.__aiml.respond(DIALOG[SEARCHFIN])
+
         keyword = self.consernarg[0]
         return self.__aiml.respond(DIALOG[keyword])
 
@@ -140,14 +148,7 @@ class SaleBot(object):
     #           4) analyze aiml respond for robot thinking
     # -------------------------------------------------------------
     def respond(self, inputstr):
-
-        logger.info("input:" + inputstr)
-
-        labelinput = self.analyze.set_label(inputstr)
-        logger.debug("input with label:" + labelinput)
-
-        normalinput = self.analyze.normalize(labelinput)
-        logger.debug("normalized input:" + normalinput)
+        normalinput = self.analyze.normalize(inputstr)
         return self.respond_analyze(self.__aiml.respond(normalinput))
 
 

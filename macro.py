@@ -36,8 +36,6 @@ PATTERN = {
                [u"QUERY", u"*"]],  # QUERY可以重复多次，对于一句查询多条信息的，分多次query执行返回结果，如果前面的有打断，则放弃后面的执行
 }
 
-PTTHRESHOLD = 2.2
-
 ARGORDER = [[u"CARBRAND", u"CARNAME", u"CARMODEL", u"PRICE", u"TYPE", u"SEATS"],
             [u"PRICE", u"TYPE", u"SEATS", u"CARBRAND", u"CARNAME", u"CARMODEL", ]]
 

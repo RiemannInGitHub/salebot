@@ -1,28 +1,115 @@
 # !/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import jieba as jb
+import pandas as pd
 from macro import *
+from util import log
+from util import tool
+from fuzzywuzzy import fuzz
+
+
+logger = log.get_logger(__name__)
 
 
 class Analyze(object):
-    def __init__(self, attrdict):
-        self.attrdict = attrdict
+    def __init__(self, labeldict):
+        self.labeldict = labeldict
+        self.patterndf = pd.read_csv("corpus/pattern.csv")
+        self.normalizedf = pd.read_csv("corpus/normalize.csv")
+        self.gen_funclist = {
+            "WELCOME": self.pattern_welcome,
+            "QUERY": self.pattern_query,
+            "SEARCH": self.pattern_search,
+            "FUZZYQUERY": self.pattern_fuzzyquery,
+            "SEARCHQUERY": self.pattern_searchquery,
+            "COMPARE": self.pattern_compare
+        }
+        self.special_key = {
+            PRICE: self.special_price,
+            CARMODEL: self.special_carmodel,
+        }
 
     # -------------------------------------------------------------
     # function: set labels in an input
     # args: input -- inputstr eg: "长安c15"
     # return: output -- input with labels eg: "carbrand长安<carmodel>c15"
     # -------------------------------------------------------------
+    # TODO:for price and model the include problem not solved, need to write a func for it
     def set_label(self, inputstr):
-        output = ""
-        result = jb.cut(inputstr)
+        labelrinput = inputstr
+        labelinput = ""
+        result = tool.cut_no_blank(inputstr)
         for word in result:
-            label = [k for k, v in self.attrdict.iteritems() if word in v.values()]
+            label = [k for k, v in self.labeldict.iteritems() if word in v.values()]
             if len(label) != 0:
-                output = output + ' ' + label.pop() + ' '
-            output = output + word
+                labelinput = labelinput + ' ' + label.pop() + ' '
+                labelrinput.replace(word, label, 1)
+            labelinput = labelinput + word
+        return labelinput, labelrinput
+
+    def search(self, labelrinput):
+        score = {"score": 0, "index": 0}
+        index = 0
+        for question in self.patterndf["question"].values:
+            tmpscore = fuzz.ratio(question, str(labelrinput))
+            if tmpscore > score["score"]:
+                score["score"] = tmpscore
+                score["index"] = index
+            index += 1
+
+        logger.debug("labelrinput max score is " + str(score["score"]))
+
+        if score["score"] > 50:
+            return self.patterndf["category"][score["index"]]
+        else:
+            return None
+
+    def pattern_welcome(self):
+        return "WELCOME"
+
+    # TODO:muliti query need to be added
+    def pattern_query(self, labelinput):
+        inputl = tool.cut_no_blank(labelinput)
+        output = "QUERY"
+        for word in inputl:
+            result, index, column = tool.df_inlude_search(self.normalizedf, word, "value")
+            if result:
+                output += ' ' + self.normalizedf["label"][index] + ' '
         return output
+
+    def special_price(self, inputstring):
+        pass
+
+    def special_carmodel(self, inputstring):
+        pass
+
+    def pattern_search(self, labelinput):
+        inputl = tool.cut_no_blank(labelinput)
+        output = "SEARCH"
+        index = 0
+        for word in inputl:
+            if word in self.special_key.keys():
+                s, inputl = self.special_key[word](inputl)
+                output += ' ' + str(s) + ' '
+            else:
+                # TODO: fuzzy match should be consider&design, now is too specific
+                s = word + ' ' + inputl[index + 1]
+                output += ' ' + s + ' '
+            index += 1
+        return output
+
+    def pattern_fuzzyquery(self, labelinput):
+        pass
+
+    def pattern_searchquery(self, labelinput):
+        pass
+
+    def pattern_compare(self, labelinput):
+        pass
+
+    def gen_output(self, pattern, labelinput):
+        gen_func = self.gen_funclist[pattern]
+        return gen_func(labelinput)
 
     # -------------------------------------------------------------
     # function: normalize inputstr
@@ -30,40 +117,20 @@ class Analyze(object):
     # return: output -- normalized input
     # -------------------------------------------------------------
     def normalize(self, inputstr):
-        fenci = jb.cut(inputstr)
-        score = {}
-        labels = {}
-        outputl = []
+        logger.info("input:" + inputstr)
 
-        for pattern, value in PATTERN.iteritems():
-            score[pattern] = 0
-            for word in fenci:
-                if word in value[0].keys():
-                    score[pattern] = score[pattern] + value[0][word]
-                if word in self.attrdict.keys():
-                    for w in fenci:
-                        if w != ' ':
-                            labels[word] = w
-                            break
+        labelinput, labelrinput = self.set_label(inputstr)
+        logger.debug("input with label:" + labelinput)
+        logger.debug("input with label replaced:" + labelrinput)
 
-        sorted(score.iteritems(), key=lambda d: d[1], reverse=True)
+        pattern = self.search(labelrinput)
+        logger.debug("pattern:" + str(pattern))
 
-        k = score.keys()[0]
-        v = score[k]
-        if v > PTTHRESHOLD:
-            for word in PATTERN[k][1]:
-                if word in labels.keys():
-                    outputl.append(word)
-                    outputl.append(labels[word])
-                else:
-                    outputl.append(word)
-            outputstr = " ".join(outputl)
-        else:
-            outputstr = inputstr
-
-        return outputstr
+        output = self.gen_output(pattern, labelinput)
+        logger.info("output:" + output)
+        return output
 
 if __name__ == "__main__":
     # for test
-    pass
+    analyze = Analyze({})
 

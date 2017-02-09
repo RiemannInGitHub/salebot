@@ -7,6 +7,7 @@ import car
 import os
 import json
 import re
+import aimlcov.tuling as tuling
 from macro import *
 from util import log
 
@@ -24,12 +25,15 @@ class SaleBot(object):
         self.analyze = analyze.Analyze(self.database.generate_attrdict())
         self.attrlist = self.database.generate_attrlist()
         self.car = car.Car(self.attrlist)
+        self.tuling = tuling.TulingBot()
         self.consernarg = []
         self.msgregex = re.compile('\{.+\}')
         self.msgfunclist = {
-            u'SET':      self.msg_set_handle,
-            u'QUERY':    self.msg_query_handle,
-            u'DBSEARCH': self.msg_dbsearch_handle,
+            "SET":      self.msg_set_handle,
+            "QUERY":    self.msg_query_handle,
+            "DBSEARCH": self.msg_dbsearch_handle,
+            "TULING":   self.msg_tuling_handle,
+
         }
         logger.info("salebot start")
 
@@ -47,6 +51,9 @@ class SaleBot(object):
         elif 1 < lenth:
             if PRICE == key:
                 pass
+
+    def msg_tuling_handle(self, msg):
+        return 'tl' + self.tuling.tuling_auto_reply(msg)
 
     def gen_consernarg(self, label):
         if len(self.consernarg) != 0:

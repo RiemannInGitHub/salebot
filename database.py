@@ -62,9 +62,6 @@ class Database(object):
 if __name__ == "__main__":
     # for test
     database = Database()
-    conditiond = {CARBRAND: u"长安", CARNAME: u"CS15", CARMODEL: u"", PRICE: u"", TYPE: u"", SEATS: u"",
-                    ENGINE: u"", GEARBOX: u"", OILCONSUMPTION: u"", ROZ: u""}
-    database.query_by_condition(conditiond, False)
     lenth, value = database.get_label_value(PRICE)
     database.generate_attrdict()
     logger.warning("success")

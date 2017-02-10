@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/env python
-import aimlcov
+import aimlcov.aimlbrain as aimlbrain
 import analyze
 import database
 import car
@@ -17,7 +17,7 @@ logger = log.get_logger(__name__)
 class SaleBot(object):
     def __init__(self, userkey=None, currentcar=None,
                  aimlpath=os.path.split(os.path.realpath(__file__))[0] + "/aimlcov/load_aiml.xml"):
-        self.__aiml = aimlcov.AimlBrain(aimlpath)
+        self.__aiml = aimlbrain.AimlBrain(aimlpath)
         self.username = ""
         self.userkey = userkey
         self.carlist = []
@@ -116,25 +116,35 @@ class SaleBot(object):
     # -------------------------------------------------------------
     def respond_analyze(self, response):
         m = self.msgregex.match(response)
+        logger.debug("aiml response: " + unicode(response))
         output = ""
 
         if m is not None:
             text = response[m.end():]
             string = m.group()
-            msg = json.loads(string)
+            msg = {}
+
+            # TODO: add a decorator for log exception
+            try:
+                msg = json.loads(string)
+            except Exception as e:
+                logger.critical("exception: " + unicode(Exception) + ":" + unicode(e))
+                log.log_traceback()
+
             for msgtype in msg.keys():
                 handlefunc = self.msgfunclist[msgtype]
                 try:
                     output = handlefunc(msg[msgtype])
-                except ValueError:
-                    logger.error("the database result is NULL, sth wrong happened")
+                except Exception as e:
+                    logger.critical("exception: " + unicode(Exception) + ":" + unicode(e))
+                    log.log_traceback()
                 else:
                     if output is None:
                         output = text
         else:
             output = response
 
-        logger.info("output:" + output)
+        logger.info("output: " + output)
         return output
 
     # -------------------------------------------------------------
@@ -149,6 +159,10 @@ class SaleBot(object):
     # -------------------------------------------------------------
     def respond(self, inputstr):
         normalinput = self.analyze.normalize(inputstr)
+        if normalinput is None:
+            logger.error("in respond the normalinput is None")
+            return ""
+
         return self.respond_analyze(self.__aiml.respond(normalinput))
 
 

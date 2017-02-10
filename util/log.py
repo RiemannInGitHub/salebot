@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import traceback
 from logging.handlers import RotatingFileHandler
 import os
 
@@ -42,7 +43,8 @@ class ColoredFormatter(logging.Formatter):
             levelname_color = COLOR_SEQ % (30 + COLORS[levelname]) + levelname + RESET_SEQ
             record.levelname = levelname_color
         return logging.Formatter.format(self, record)
-FORMAT = "%(asctime)s-[%(levelname)s]%(filename)s:%(lineno)d %(message)s"
+
+FORMAT = "%(asctime)s - %(levelname)s %(filename)s:%(lineno)d %(message)s"
 COLOR_FORMAT = formatter_message(FORMAT, True)
 color_formatter = ColoredFormatter(COLOR_FORMAT)
 log_file = '%s/../log/salebot.log' % os.path.split(os.path.realpath(__file__))[0]
@@ -61,6 +63,13 @@ def get_logger(logger_name):
     loger.addHandler(ch)
     loger.setLevel(logging.DEBUG)
     return loger
+
+
+def log_traceback():
+    with open(log_file, 'a') as f:
+        traceback.print_exc()
+        traceback.print_exc(file=f)
+        f.flush()
 
 if __name__ == "__main__":
     logger = get_logger('test')

@@ -9,9 +9,6 @@ import os
 sys.path.insert(0, os.path.split(os.path.realpath(__file__))[0] + "/..")
 from util import log
 
-reload(sys)
-sys.setdefaultencoding('utf8')
-
 
 logger = log.get_logger(__name__)
 
@@ -55,4 +52,4 @@ if __name__ == "__main__":
 
     text = sys.argv[1]
     tuling = TulingBot()
-    print 'tl' + tuling.tuling_auto_reply(text)
+    print ('tl', tuling.tuling_auto_reply(text))

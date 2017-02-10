@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/env python
 import os
-from macro import *
 from third_party import aiml
+from util import log
+
+logger = log.get_logger(__name__)
 
 
 class AimlBrain(object):
     def __init__(self, aimlpath=os.path.split(os.path.realpath(__file__))[0] + "/load_aiml.xml"):
         print(aimlpath)
-        self.kernel = aiml.Kernel()
+        self.kernel = aiml.Kernel.Kernel()
         self.kernel.learn(aimlpath)
         self.kernel.respond("load aiml start")
 
@@ -20,9 +22,10 @@ class AimlBrain(object):
             inputstr.replace('*', i, 1)
         return self.kernel.respond(inputstr)
 
+    # TODO: use json create msg or write a func for it
     def save_viable(self, vianame, viavalue):
-        assert(vianame in AIMLVAR)
-        message = '{SAVE:' + vianame + ' is ' + viavalue
+        message = "{SAVE:{" + vianame + ':' + viavalue + "}"
+        logger.debug("aiml save return:" + self.respond(message))
         print(self.respond(message))
 
     # -------------------------------------------------------------

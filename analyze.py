@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd
+import json
 from macro import *
 from util import log
 from util import tool
@@ -17,6 +18,7 @@ class Analyze(object):
         self.patterndf = pd.read_csv("corpus/pattern.csv")
         self.normalizedf = pd.read_csv("corpus/normalize.csv")
         self.gen_funclist = {
+            None: self.pattern_none,
             "WELCOME": self.pattern_welcome,
             "QUERY": self.pattern_query,
             "SEARCH": self.pattern_search,
@@ -42,8 +44,8 @@ class Analyze(object):
         for word in result:
             label = [k for k, v in self.labeldict.iteritems() if word in v.values()]
             if len(label) != 0:
-                labelinput = labelinput + ' ' + label.pop() + ' '
-                labelrinput.replace(word, label, 1)
+                labelrinput.replace(word, label[0], 1)
+                labelinput = labelinput + ' ' + label[0] + ' '
             labelinput = labelinput + word
         return labelinput, labelrinput
 
@@ -51,20 +53,22 @@ class Analyze(object):
         score = {"score": 0, "index": 0}
         index = 0
         for question in self.patterndf["question"].values:
-            tmpscore = fuzz.ratio(question, str(labelrinput))
+            tmpscore = fuzz.ratio(unicode(question), labelrinput)
             if tmpscore > score["score"]:
                 score["score"] = tmpscore
                 score["index"] = index
             index += 1
-
-        logger.debug("labelrinput max score is " + str(score["score"]))
+        logger.debug("labelrinput max score is " + unicode(score["score"]))
 
         if score["score"] > 50:
             return self.patterndf["category"][score["index"]]
         else:
             return None
 
-    def pattern_welcome(self):
+    def pattern_none(self, inputstr):
+        return inputstr
+
+    def pattern_welcome(self, input):
         return "WELCOME"
 
     # TODO:muliti query need to be added
@@ -74,7 +78,7 @@ class Analyze(object):
         for word in inputl:
             result, index, column = tool.df_inlude_search(self.normalizedf, word, "value")
             if result:
-                output += ' ' + self.normalizedf["label"][index] + ' '
+                output += ':' + self.normalizedf["label"][index]
         return output
 
     def special_price(self, inputstring):
@@ -83,19 +87,24 @@ class Analyze(object):
     def special_carmodel(self, inputstring):
         pass
 
+    # TODO:muliti search need to be added
+    # TODO:use json replace the data trans
     def pattern_search(self, labelinput):
         inputl = tool.cut_no_blank(labelinput)
-        output = "SEARCH"
+        output = "SEARCH "
+        outputd = {}
         index = 0
+
         for word in inputl:
             if word in self.special_key.keys():
                 s, inputl = self.special_key[word](inputl)
-                output += ' ' + str(s) + ' '
-            else:
+                outputd[word] = unicode(s)
+            elif word in self.labeldict.keys():
                 # TODO: fuzzy match should be consider&design, now is too specific
-                s = word + ' ' + inputl[index + 1]
-                output += ' ' + s + ' '
+                outputd[word] = inputl[index + 1]
             index += 1
+
+        output += json.dumps(outputd)
         return output
 
     def pattern_fuzzyquery(self, labelinput):
@@ -117,17 +126,33 @@ class Analyze(object):
     # return: output -- normalized input
     # -------------------------------------------------------------
     def normalize(self, inputstr):
-        logger.info("input:" + inputstr)
+        logger.info("input: " + inputstr)
 
-        labelinput, labelrinput = self.set_label(inputstr)
-        logger.debug("input with label:" + labelinput)
-        logger.debug("input with label replaced:" + labelrinput)
+        try:
+            labelinput, labelrinput = self.set_label(inputstr)
+        except Exception as e:
+            logger.critical("exception: " + unicode(Exception) + ":" + unicode(e))
+            log.log_traceback()
+            return
+        logger.debug("input with label: " + labelinput)
+        logger.debug("input replaced label: " + labelrinput)
 
-        pattern = self.search(labelrinput)
-        logger.debug("pattern:" + str(pattern))
+        try:
+            pattern = self.search(labelrinput)
+        except Exception as e:
+            logger.critical("exception: " + unicode(Exception) + ":" + unicode(e))
+            log.log_traceback()
+            return
+        logger.debug("pattern: " + unicode(pattern))
 
-        output = self.gen_output(pattern, labelinput)
-        logger.info("output:" + output)
+        try:
+            output = self.gen_output(pattern, labelinput)
+        except Exception as e:
+            logger.critical("exception: " + unicode(Exception) + ":" + unicode(e))
+            log.log_traceback()
+            return
+
+        logger.debug("normalize to aiml: " + output)
         return output
 
 if __name__ == "__main__":

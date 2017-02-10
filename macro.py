@@ -25,8 +25,6 @@ DIALOG = {
     QUERYFIN: "QUERY FIN KEY * VALUE *",
 }
 
-AIMLVAR = ["carbrand", "carmodel", "userkey"]
-
 
 PATTERN = {
     u"看车": [{u"CARBRAND": 1, u"CARMODEL": 1, u"看": 0.3, u"我": 0.3, u"怎么样": 0.3}, [u"看车", u"CARBRAND", u"CARMODEL"]],

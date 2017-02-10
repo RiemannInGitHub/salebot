@@ -842,7 +842,7 @@ class Kernel:
         in the bot's brain.
 
         """
-        return str(self.numCategories())
+        return unicode(self.numCategories())
 
     # <sr>
     def _processSr(self,elem,sessionID):

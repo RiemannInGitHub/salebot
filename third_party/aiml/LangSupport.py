@@ -40,9 +40,12 @@ def splitUnicode(s):
 
 
 def splitChinese(s):
-    
-    result = jb.cut(s)
+
+    us = unicode(s)
+    print us
+    result = jb.cut(us)
     ret = '|'.join(result)
+    print ret
 
     return ret.split("|")
 

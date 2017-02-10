@@ -13,29 +13,13 @@
         </template>
     </category>
     <category>
-        <pattern>看车 CARBRAND * CARNAME *</pattern>
+        <pattern>SEARCH*</pattern>
         <template>
-            {"SET":{"CARBRAND":"<star index = "1"/>","CARNAME":"<star index = "2"/>"}}
-            <think>
-                <set name = "carbrand"> <star index = "1"/></set>
-                <set name = "carname"> <star index = "2"/></set>
-            </think>
-            <random>
-                <li>好的，知道了</li>
-                <li>ok～</li>
-                <li>请问您关心它的什么呢？</li>
-            </random>
+            {"DBSEARCH":<star index = "1"/>}
         </template>
     </category>
     <category>
-        <pattern>SEARCH CARBRAND * CARNAME * CARMODEL * PRICE * TYPE * SEATS *</pattern>
-        <template>
-            {"DBSEARCH":{"CARBRAND":"<star index = "1"/>", "CARNAME":"<star index = "2"/>", "CARMODEL":"<star index = "3"/>"
-            ,"PRICE":"<star index = "4"/>", "TYPE":"<star index = "5"/>", "SEATS":"<star index = "6"/>"}}
-        </template>
-    </category>
-    <category>
-        <pattern>QUERY *</pattern>
+        <pattern>QUERY*</pattern>
         <template>
             {"QUERY": "<star index = "1"/>"}
         </template>

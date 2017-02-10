@@ -173,7 +173,7 @@ class IBotSignature:
         self.realm = realm
 
     def get_signature(self):
-        time_str = str(datetime.datetime.now())
+        time_str = unicode(datetime.datetime.now())
         nonce = hashlib.sha1(time_str).hexdigest()
 
         HA1 = "{0}:{1}:{2}".format(self.app_key, self.realm, self.app_sec)

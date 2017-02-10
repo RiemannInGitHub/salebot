@@ -1,6 +1,6 @@
-__all__ = ["AimlParser", "Kernelf"]
+__all__ = ["AimlParser", "Kernel.py"]
 
-from .Kernelf import Kernel
+from .Kernel import *
 
 
 # The Kernel class is the only class most implementations should need.

@@ -3,11 +3,14 @@
 
 import pandas as pd
 import json
+import sys
 from macro import *
 from util import log
 from util import tool
 from fuzzywuzzy import fuzz
 
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 logger = log.get_logger(__name__)
 

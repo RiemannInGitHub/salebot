@@ -10,7 +10,7 @@ logger = log.get_logger(__name__)
 class AimlBrain(object):
     def __init__(self, aimlpath=os.path.split(os.path.realpath(__file__))[0] + "/load_aiml.xml"):
         print(aimlpath)
-        self.kernel = aiml.Kernelf()
+        self.kernel = aiml.Kernel()
         self.kernel.learn(aimlpath)
         self.kernel.respond("load aiml start")
 

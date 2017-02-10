@@ -46,8 +46,8 @@ class PatternMgr:
                 try:
                         data = [self._templateCount, self._botName, self._root]
                         return marshal.dumps(data)
-                except Exception, e:
-                        print "Error dumping to str"
+                except Exception as e:
+                        print("Error dumping to str")
                         raise Exception, e
 
         def loads(self, raw):
@@ -57,8 +57,8 @@ class PatternMgr:
                         self._templateCount = data[0]
                         self._botName = data[1]
                         self._root = data[2]
-                except Exception, e:
-                        print "Error loading from str"
+                except Exception as e:
+                        print("Error loading from str")
                         raise Exception, e
 
         def save(self, filename):
@@ -72,8 +72,8 @@ class PatternMgr:
                         marshal.dump(self._botName, outFile)
                         marshal.dump(self._root, outFile)
                         outFile.close()
-                except Exception, e:
-                        print "Error saving PatternMgr to file %s:" % filename
+                except Exception as e:
+                        print("Error saving PatternMgr to file %s:" % filename)
                         raise Exception, e
 
         def restore(self, filename):
@@ -84,8 +84,8 @@ class PatternMgr:
                         self._botName = marshal.load(inFile)
                         self._root = marshal.load(inFile)
                         inFile.close()
-                except Exception, e:
-                        print "Error restoring PatternMgr from file %s:" % filename
+                except Exception as e:
+                        print("Error restoring PatternMgr from file %s:" % filename)
                         raise Exception, e
 
         def add(self, (pattern,that,topic), template):

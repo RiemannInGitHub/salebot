@@ -52,4 +52,4 @@ if __name__ == "__main__":
 
     text = sys.argv[1]
     tuling = TulingBot()
-    print ('tl', tuling.tuling_auto_reply(text))
+    print('tl', tuling.tuling_auto_reply(text))

@@ -42,10 +42,10 @@ def splitUnicode(s):
 def splitChinese(s):
 
     us = unicode(s)
-    print us
+    print(us)
     result = jb.cut(us)
     ret = '|'.join(result)
-    print ret
+    print(ret)
 
     return ret.split("|")
 

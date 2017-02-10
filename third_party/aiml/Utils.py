@@ -17,7 +17,7 @@ def sentences(s):
     sentenceList = []
     l = len(s)
     while pos < l:
-        try: p = s.index('.', pos)
+        try: p = s.index(u'。', pos)
         except: p = l+1
         try: q = s.index('?', pos)
         except: q = l+1

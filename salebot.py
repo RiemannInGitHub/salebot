@@ -7,6 +7,7 @@ import car
 import os
 import json
 import re
+import copy
 import aimlcov.tuling as tuling
 from macro import *
 from util import log
@@ -73,14 +74,18 @@ class SaleBot(object):
         elif SEATS == label:
             self.consernarg = ARGORDER[1]
 
+        logger.debug("[SEARCH]gen_consernarg: " + str(self.consernarg))
         return flag
 
     def set_car_para(self, label, value):
         self.car.parad[label] = value
 
     def process_consernarg(self):
-        for k in self.consernarg:
+        tmpconsernarg = copy.deepcopy(self.consernarg)
+        for k in tmpconsernarg:
+            logger.debug("[SEARCH]process_consernarg consernarg is " + str(self.consernarg))
             lenth, value = self.database.get_label_value(k)
+            logger.debug("[SEARCH]key " + k + " in database lenth is " + str(lenth) + " value is " + str(value))
             if 0 == lenth:
                 raise ValueError
             if PRICE == k or CARMODEL == k:
@@ -90,6 +95,7 @@ class SaleBot(object):
             elif 1 == lenth:
                 self.set_car_para(k, value[0])
                 self.consernarg.remove(k)
+        logger.debug("[SEARCH]process_consernarg: " + str(self.consernarg))
 
     def msg_dbsearch_handle(self, msg):
         flag = False

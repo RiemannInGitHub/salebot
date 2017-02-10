@@ -8,7 +8,7 @@ def df_inlude_search(df, value, column):
     result = False
     index = 0
     for string in df[column].values:
-        strlist = string.splite(',')
+        strlist = string.split('|')
         if value in strlist:
             result = True
             break

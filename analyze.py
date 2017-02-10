@@ -79,7 +79,8 @@ class Analyze(object):
         inputl = tool.cut_no_blank(labelinput)
         output = "QUERY"
         for word in inputl:
-            result, index, column = tool.df_inlude_search(self.normalizedf, word, "value")
+            result, index = tool.df_inlude_search(self.normalizedf, word, "value")
+            logger.debug("pattern_query word is " + word + "inlude_search result is " + str(result))
             if result:
                 output += ':' + self.normalizedf["label"][index]
         return output
@@ -146,7 +147,7 @@ class Analyze(object):
             logger.critical("exception: " + unicode(Exception) + ":" + unicode(e))
             log.log_traceback()
             return
-        logger.debug("pattern: " + unicode(pattern))
+        logger.info("pattern: " + unicode(pattern))
 
         try:
             output = self.gen_output(pattern, labelinput)
@@ -155,7 +156,7 @@ class Analyze(object):
             log.log_traceback()
             return
 
-        logger.debug("normalize to aiml: " + output)
+        logger.info("normalize to aiml: " + output)
         return output
 
 if __name__ == "__main__":

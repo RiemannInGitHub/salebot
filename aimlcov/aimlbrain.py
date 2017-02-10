@@ -24,6 +24,7 @@ class AimlBrain(object):
 
     # TODO: use json create msg or write a func for it
     def save_viable(self, vianame, viavalue):
+        logger.debug("aiml save via:" + vianame + "," + viavalue)
         message = "{SAVE:{" + vianame + ':' + viavalue + "}}"
         logger.debug("aiml save return:" + self.respond(message))
         print(self.respond(message))

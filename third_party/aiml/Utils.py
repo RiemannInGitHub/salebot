@@ -30,7 +30,7 @@ def sentences(s):
     # the entire input string.
     if len(sentenceList) == 0: sentenceList.append(s)
     # auto convert chinese
-    return map(lambda s: u' '.join(splitChinese(s)), sentenceList)
+    return sentenceList
 
 # Self test
 if __name__ == "__main__":

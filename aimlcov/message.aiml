@@ -2,7 +2,7 @@
 
 <aiml version="1.0">
     <category>
-        <pattern>{SAVE:{CARBRAND:*}}</pattern>
+        <pattern>{ SAVE : { CARBRAND : * } }</pattern>
         <template>
             <think>
                 <set name = "CARBRAND"> <star index = "1"/></set>

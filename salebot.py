@@ -41,16 +41,19 @@ class SaleBot(object):
         for label, value in msg.items():
             self.car.parad[label] = value
 
-    def msg_query_handle(self, key):
-        lenth, value = self.database.get_label_value(key)
-        if 0 == lenth:
-            raise ValueError
-        elif 1 == lenth:
-            vialist = [key, value]
-            self.__aiml.respond_with_viable(vialist, DIALOG[QUERYFIN])
-        elif 1 < lenth:
-            if PRICE == key:
-                pass
+    def msg_query_handle(self, keyl):
+        output = ""
+        for key in keyl:
+            lenth, value = self.database.get_label_value(key)
+            if 0 == lenth:
+                raise ValueError
+            elif 1 == lenth:
+                vialist = [key, value[0]]
+                output += self.__aiml.respond_with_viable(vialist, DIALOG[QUERYFIN]) + ";"
+            elif 1 < lenth:
+                if PRICE == key:
+                    pass
+        return output
 
     def msg_tuling_handle(self, msg):
         return 'tl' + self.tuling.tuling_auto_reply(msg)
@@ -133,6 +136,7 @@ class SaleBot(object):
             # TODO: add a decorator for log exception
             try:
                 msg = json.loads(string)
+                logger.debug("parse msg is:" + str(msg))
             except Exception as e:
                 logger.critical("exception: " + unicode(Exception) + ":" + unicode(e))
                 log.log_traceback()

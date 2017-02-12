@@ -18,8 +18,10 @@ class AimlBrain(object):
         return self.kernel.respond(inputstr)
 
     def respond_with_viable(self, vialist, inputstr):
+        logger.debug("aiml respond_with_viable, the vialist is:" + str(vialist))
         for i in vialist:
-            inputstr.replace('*', i, 1)
+            inputstr = inputstr.replace("*", unicode(i), 1)
+        logger.debug("aiml respond_with_viable, the inputstr is:" + str(inputstr))
         return self.kernel.respond(inputstr)
 
     # TODO: use json create msg or write a func for it

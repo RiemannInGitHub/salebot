@@ -24,3 +24,9 @@ def cut_no_blank(string):
             cutlist.append(i)
     return cutlist
 
+
+def insert_list_norepeat(li, value):
+    if value not in li:
+        li.append(value)
+    return li
+

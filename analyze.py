@@ -74,15 +74,16 @@ class Analyze(object):
     def pattern_welcome(self, input):
         return "WELCOME"
 
-    # TODO:muliti query need to be added
     def pattern_query(self, labelinput):
         inputl = tool.cut_no_blank(labelinput)
-        output = "QUERY"
+        output = "QUERY "
+        outputl = []
         for word in inputl:
             result, index = tool.df_inlude_search(self.normalizedf, word, "value")
             logger.debug("pattern_query word is " + word + "inlude_search result is " + str(result))
             if result:
-                output += ':' + self.normalizedf["label"][index]
+                outputl = tool.insert_list_norepeat(outputl, self.normalizedf["label"][index])
+        output += json.dumps(outputl)
         return output
 
     def special_price(self, inputstring):
@@ -156,7 +157,7 @@ class Analyze(object):
             log.log_traceback()
             return
 
-        logger.info("normalize to aiml: " + output)
+        logger.info("normalize to aiml: " + str(output))
         return output
 
 if __name__ == "__main__":

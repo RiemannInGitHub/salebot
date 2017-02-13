@@ -19,7 +19,8 @@ class Analyze(object):
     def __init__(self, labeldict):
         self.labeldict = labeldict
         self.patterndf = pd.read_csv("corpus/pattern.csv")
-        self.normalizedf = pd.read_csv("corpus/normalize.csv")
+        self.normalizedf = pd.read_csv("corpus/querydict.csv")
+        self.lastlabel = ""
         self.gen_funclist = {
             None: self.pattern_none,
             "WELCOME": self.pattern_welcome,
@@ -30,26 +31,37 @@ class Analyze(object):
             "COMPARE": self.pattern_compare
         }
         self.special_key = {
-            PRICE: self.special_price,
-            CARMODEL: self.special_carmodel,
+            PRICE: [self.price_setlabel, self.price_normalize],
+            CARMODEL: [self.model_setlabel, self.model_normalize],
         }
 
-    # -------------------------------------------------------------
-    # function: set labels in an input
-    # args: input -- inputstr eg: "长安c15"
-    # return: output -- input with labels eg: "carbrand长安<carmodel>c15"
-    # -------------------------------------------------------------
+    def price_setlabel(self):
+        pass
+
+    def model_setlabel(self):
+        pass
+
+    def classify_word(self, word, string):
+        result = False
+        label = ""
+        value = ""
+        replacevalue = ""
+
+        labell = [k for k, v in self.labeldict.iteritems() if word in v.values()]
+        return result, label, value, replacevalue
+
     # TODO:for price and model the include problem not solved, need to write a func for it
     def set_label(self, inputstr):
         labelrinput = inputstr
-        labelinput = ""
+        labelinput = inputstr
         result = tool.cut_no_blank(inputstr)
+        index = 0
         for word in result:
-            label = [k for k, v in self.labeldict.iteritems() if word in v.values()]
-            if len(label) != 0:
-                labelrinput = labelrinput.replace(word, label[0], 1)
-                labelinput = labelinput + ' ' + label[0] + ' '
-            labelinput = labelinput + word
+            result, label, value, replacevalue = self.classify_word(word, inputstr)
+            if result:
+                labelrinput = labelrinput.replace(replacevalue, value, 1)
+                labelinput = labelinput.replace(replacevalue, label + " " + value, 1)
+            index += 1
         return labelinput, labelrinput
 
     def search(self, labelrinput):
@@ -84,20 +96,18 @@ class Analyze(object):
         outputl = []
         for word in inputl:
             result, index = tool.df_inlude_search(self.normalizedf, word, "value")
-            logger.debug("pattern_query word is " + word + "inlude_search result is " + str(result))
+            logger.debug("[QUERY]pattern_query word is " + word + "inlude_search result is " + str(result))
             if result:
                 outputl = tool.insert_list_norepeat(outputl, self.normalizedf["label"][index])
         output += json.dumps(outputl)
         return output
 
-    def special_price(self, inputstring):
+    def price_normalize(self):
         pass
 
-    def special_carmodel(self, inputstring):
+    def model_normalize(self):
         pass
 
-    # TODO:muliti search need to be added
-    # TODO:use json replace the data trans
     def pattern_search(self, labelinput):
         inputl = tool.cut_no_blank(labelinput)
         output = "SEARCH "
@@ -106,7 +116,7 @@ class Analyze(object):
 
         for word in inputl:
             if word in self.special_key.keys():
-                s, inputl = self.special_key[word](inputl)
+                s, inputl = self.special_key[word][1](inputl)
                 outputd[word] = unicode(s)
             elif word in self.labeldict.keys():
                 # TODO: fuzzy match should be consider&design, now is too specific

@@ -36,6 +36,10 @@ class SaleBot(object):
             "DBSEARCH": self.msg_dbsearch_handle,
             "TULING":   self.msg_tuling_handle,
         }
+        self.special_search = {
+            PRICE: self.set_price_search,
+            CARMODEL: self.set_model_search,
+        }
         logger.info("salebot start")
 
     def msg_set_handle(self, msg):
@@ -82,6 +86,12 @@ class SaleBot(object):
 
     def set_car_para(self, label, value):
         self.car.parad[label] = value
+
+    def set_price_search(self):
+        pass
+
+    def set_model_search(self):
+        pass
 
     def process_consernarg(self):
         tmpconsernarg = copy.deepcopy(self.consernarg)

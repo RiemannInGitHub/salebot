@@ -18,7 +18,6 @@ testdb = '[\
 
 
 class Database(object):
-    # link db which contain car's data
     def __init__(self):
         self.result = pd.DataFrame()
 

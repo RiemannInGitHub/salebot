@@ -27,6 +27,7 @@ class SaleBot(object):
         self.attrlist = self.database.generate_attrlist()
         self.car = car.Car(self.attrlist)
         self.tuling = tuling.TulingBot()
+        self.genargflag = False
         self.consernarg = []
         self.msgregex = re.compile('\{.+\}')
         self.msgfunclist = {
@@ -58,26 +59,25 @@ class SaleBot(object):
     def msg_tuling_handle(self, msg):
         return 'tl' + self.tuling.tuling_auto_reply(msg)
 
-    def gen_consernarg(self, label):
-        flag = False
-
+    def gen_consernarg(self, label, oldflag):
         if len(self.consernarg) != 0:
-            return flag
+            return oldflag
         flag = True
+        self.car.init_parad()
         if CARBRAND == label:
-            self.consernarg = ARGORDER[0]
+            self.consernarg = copy.deepcopy(ARGORDER[0])
         elif CARNAME == label:
-            self.consernarg = ARGORDER[0]
+            self.consernarg = copy.deepcopy(ARGORDER[0])
         elif CARMODEL == label:
-            self.consernarg = ARGORDER[0]
+            self.consernarg = copy.deepcopy(ARGORDER[0])
         elif PRICE == label:
-            self.consernarg = ARGORDER[1]
+            self.consernarg = copy.deepcopy(ARGORDER[1])
         elif TYPE == label:
-            self.consernarg = ARGORDER[1]
+            self.consernarg = copy.deepcopy(ARGORDER[1])
         elif SEATS == label:
-            self.consernarg = ARGORDER[1]
+            self.consernarg = copy.deepcopy(ARGORDER[1])
 
-        logger.debug("[SEARCH]gen_consernarg: " + str(self.consernarg))
+        logger.debug("[SEARCH]gen_consernarg: " + str(self.consernarg) + " flag is " + str(flag))
         return flag
 
     def set_car_para(self, label, value):
@@ -101,14 +101,12 @@ class SaleBot(object):
         logger.debug("[SEARCH]process_consernarg: " + str(self.consernarg))
 
     def msg_dbsearch_handle(self, msg):
-        flag = False
-
         for label, value in msg.items():
             if value != "":
-                flag = self.gen_consernarg(label)
+                self.genargflag = self.gen_consernarg(label, self.genargflag)
                 self.set_car_para(label, value)
                 self.__aiml.save_viable(label, value)
-        self.database.query_by_condition(self.car.parad, flag)
+        self.database.query_by_condition(self.car.parad, self.genargflag)
         self.process_consernarg()
 
         if 0 == len(self.consernarg):
@@ -180,6 +178,6 @@ if __name__ == "__main__":
     # for test
     salerobot = SaleBot()
     while(1):
-        print(salerobot.respond(raw_input(">")))
+        print(salerobot.respond(raw_input(">>>>")))
 
 

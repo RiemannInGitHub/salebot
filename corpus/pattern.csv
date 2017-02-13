@@ -14,6 +14,7 @@ question,category
 排量多少,QUERY
 手动档还是自动档？,QUERY
 最高车速是多少？,QUERY
+什么类型的？,QUERY
 支持自动停车功能么？,QUERY
 有没有儿童安全座椅接口？,QUERY
 有没有智能操作系统？,QUERY

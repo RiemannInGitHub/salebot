@@ -51,7 +51,7 @@ log_file = '%s/../log/salebot.log' % os.path.split(os.path.realpath(__file__))[0
 
 fh = RotatingFileHandler(log_file, maxBytes=50*1024*1024, backupCount=5)
 fh.setFormatter(color_formatter)
-fh.setLevel(logging.INFO)
+fh.setLevel(logging.DEBUG)
 ch = logging.StreamHandler()
 ch.setFormatter(color_formatter)
 ch.setLevel(logging.DEBUG)

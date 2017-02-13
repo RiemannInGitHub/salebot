@@ -47,7 +47,7 @@ class Analyze(object):
         for word in result:
             label = [k for k, v in self.labeldict.iteritems() if word in v.values()]
             if len(label) != 0:
-                labelrinput.replace(word, label[0], 1)
+                labelrinput = labelrinput.replace(word, label[0], 1)
                 labelinput = labelinput + ' ' + label[0] + ' '
             labelinput = labelinput + word
         return labelinput, labelrinput
@@ -56,10 +56,14 @@ class Analyze(object):
         score = {"score": 0, "index": 0}
         index = 0
         for question in self.patterndf["question"].values:
-            tmpscore = fuzz.ratio(unicode(question), labelrinput)
+            _, labelrquestion = self.set_label(question)
+            tmpscore = fuzz.ratio(labelrquestion, labelrinput)
             if tmpscore > score["score"]:
                 score["score"] = tmpscore
                 score["index"] = index
+            # TODO：improve log.py support showing specific log
+            # logger.debug("labelrquestion is " + str(labelrquestion))
+            # logger.debug("tmpscore is " + str(tmpscore))
             index += 1
         logger.debug("labelrinput max score is " + unicode(score["score"]))
 
@@ -139,8 +143,8 @@ class Analyze(object):
             logger.critical("exception: " + unicode(Exception) + ":" + unicode(e))
             log.log_traceback()
             return
-        logger.debug("input with label: " + labelinput)
-        logger.debug("input replaced label: " + labelrinput)
+        logger.info("input with label: " + labelinput)
+        logger.info("input replaced label: " + labelrinput)
 
         try:
             pattern = self.search(labelrinput)

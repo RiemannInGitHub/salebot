@@ -33,22 +33,22 @@ class Database(object):
         df = pd.read_json(testdb)
         return df.columns.values
 
-    # flag-true query from result, flag-false query from cardb
+    # flag-true query from result, flag-false query from cardb & refresh result
     # TODO: if api return db less than 100, get all of it; else keep ask user add more condition
     def query_by_condition(self, condition, flag):
+        logger.debug("database query flag is " + str(flag) + " :(true)from db,(false)from result")
         if flag:
-            self.result = self.fliter_dataframe(condition, self.result)
-        else:
             self.result = self.fliter_dataframe(condition, pd.read_json(testdb))
-
-    def query_result(self, condition):
-        pass
+        else:
+            self.result = self.fliter_dataframe(condition, self.result)
 
     @staticmethod
     def fliter_dataframe(condition, df):
         for k, v in condition.iteritems():
             if v != "":
                 df = df.loc[df[k] == v]
+        logger.debug("fliter condition is:" + str(condition))
+        logger.debug("database result change to:\n" + str(df))
         return df
 
     def get_label_value(self, label):

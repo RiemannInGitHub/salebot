@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<aiml version="1.0">
+
+
+<category>
+<pattern>你好</pattern>
+<template>
+<srai>HELLO</srai>
+</template>
+</category>
+
+<category>
+<pattern>你好*</pattern>
+<template>
+<srai>HELLO</srai>
+</template>
+</category>
+
+<category>
+<pattern>HELLO</pattern>
+<template>
+  你好，是想看辆车吗？
+</template>
+</category>
+
+<category>
+<pattern>是</pattern>
+<template>
+<srai>YES</srai>
+</template>
+</category>
+
+<category>
+<pattern>是的</pattern>
+<template>
+<srai>YES</srai>
+</template>
+</category>
+
+<category>
+<pattern>对</pattern>
+<template>
+<srai>YES</srai>
+</template>
+</category>
+
+<category>
+<pattern>没错</pattern>
+<template>
+<srai>YES</srai>
+</template>
+</category>
+
+<category>
+<pattern>不是</pattern>
+<template>
+<srai>NO</srai>
+</template>
+</category>
+
+<category>
+<pattern>不</pattern>
+<template>
+<srai>NO</srai>
+</template>
+</category>
+
+<category>
+<pattern>没有了</pattern>
+<template>
+<srai>NO</srai>
+</template>
+</category>
+
+<category>
+<pattern>YES</pattern>
+<that>你好，是想看辆车吗？</that>
+<template>
+  <system>python aimlcov/Carinfo.py</system>
+</template>
+</category>
+
+<category>
+<pattern>我想看车辆*</pattern>
+<template>
+  <think><set name="carindex"><star/></set></think>
+  <srai>SHOW CAR</srai>
+</template>
+</category>
+
+<category>
+<pattern>我想看*</pattern>
+<template>
+  <think><set name="carindex"><star/></set></think>
+  <srai>SHOW CAR</srai>
+</template>
+</category>
+
+<category>
+<pattern>给我看*</pattern>
+<template>
+  <think><set name="carindex"><star/></set></think>
+  <srai>SHOW CAR</srai>
+</template>
+</category>
+
+<category>
+<pattern>SHOW CAR</pattern>
+<template>
+  <system>python aimlcov/Carinfo.py <get name="carindex"/></system>
+</template>
+</category>
+
+<category>
+<pattern>买了</pattern>
+<template>
+  谢谢，为您下订单
+  <system>python aimlcov/book.py</system>
+  下订单成功，还有什么需要帮助的么？
+  <think><set name="over">1</set></think>
+</template>
+</category>
+
+<category>
+<pattern>太贵了</pattern>
+<template>
+  再见
+</template>
+</category>
+
+<category>
+<pattern>NO</pattern>
+<that>你好，是想看辆车吗？</that>
+<template>
+  哦，那跟我就没什么关系了，再见
+</template>
+</category>
+
+<category>
+<pattern>NO</pattern>
+<template>
+  <condition name = "over" value="1">再见，谢谢光临</condition>
+</template>
+</category>
+
+<category>
+<pattern>*</pattern>
+<that>你说的什么我不懂</that>
+<template>
+  累了，想说再见了
+</template>
+</category>
+
+<category>
+<pattern>*</pattern>
+<that>哦，那跟我就没什么关系了，再见</that>
+<template>
+  再见
+</template>
+</category>
+
+<category>
+<pattern>*</pattern>
+<that>再见，谢谢光临</that>
+<template>
+  再见
+</template>
+</category>
+
+<category>
+<pattern>*</pattern>
+<that>累了，想说再见了</that>
+<template>
+  再见
+</template>
+</category>
+
+<category>
+<pattern>*</pattern>
+<that>再见</that>
+<template>
+  再见
+</template>
+</category>
+
+<category>
+<pattern>*</pattern>
+<template>
+<system>python aimlcov/tuling.py <star/></system>
+<!--
+<random>
+    <li>你说的什么我不懂</li>
+    <li>请再说一次？</li>
+    <li>不好意思请再说一次？</li>
+</random>
+-->
+</template>
+</category>
+
+</aiml>

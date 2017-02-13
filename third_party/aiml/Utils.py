@@ -17,7 +17,7 @@ def sentences(s):
     sentenceList = []
     l = len(s)
     while pos < l:
-        try: p = s.index('.', pos)
+        try: p = s.index(u'。', pos)
         except: p = l+1
         try: q = s.index('?', pos)
         except: q = l+1
@@ -30,7 +30,7 @@ def sentences(s):
     # the entire input string.
     if len(sentenceList) == 0: sentenceList.append(s)
     # auto convert chinese
-    return map(lambda s: u' '.join(splitChinese(s)), sentenceList)
+    return sentenceList
 
 # Self test
 if __name__ == "__main__":

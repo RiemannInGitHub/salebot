@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/env python
 import os
-from macro import *
 from third_party import aiml
+from util import log
+
+logger = log.get_logger(__name__)
 
 
 class AimlBrain(object):
@@ -15,10 +17,18 @@ class AimlBrain(object):
     def respond(self, inputstr):
         return self.kernel.respond(inputstr)
 
+    def respond_with_viable(self, vialist, inputstr):
+        logger.debug("aiml respond_with_viable, the vialist is:" + str(vialist))
+        for i in vialist:
+            inputstr = inputstr.replace("*", unicode(i), 1)
+        logger.debug("aiml respond_with_viable, the inputstr is:" + str(inputstr))
+        return self.kernel.respond(inputstr)
+
+    # TODO: use json create msg or write a func for it
     def save_viable(self, vianame, viavalue):
-        assert(vianame in AIMLVAR)
-        message = '{SAVE:' + vianame + ' is ' + viavalue
-        print(self.respond(message))
+        logger.debug("aiml save via:" + vianame + "," + viavalue)
+        message = "{SAVE:{" + vianame + ':' + viavalue + "}}"
+        logger.debug("aiml save return:" + self.respond(message))
 
     # -------------------------------------------------------------
     # function: send msg to aiml to talk with aiml

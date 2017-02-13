@@ -18,7 +18,6 @@ sys.setdefaultencoding('utf8')
 sys.path.insert(0, "../")
 import salebot
 
-
 define("port", default=8888, help="run on the given port", type=int)
 define("debug", default=True, help="run in debug mode")
 
@@ -98,8 +97,8 @@ class MessageNewHandler(tornado.web.RequestHandler):
         usermsg["html"] = tornado.escape.to_basestring(
             self.render_string("message.html", message=usermsg))
 
-        global_robot.get_user_by_key(self.cookies.output())
         outputstr = global_robot.respond(inputstr)
+
         robotmsg = {
             "id": str(uuid.uuid4()),
             "body": "Robot:" + outputstr,

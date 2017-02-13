@@ -96,12 +96,12 @@ if __name__ == "__main__":
     inStr =  "祝你生快"
     outStr = "祝你生日快乐"
     instr = u' '.join(LangSupport.splitChinese(inStr))
-    print instr
-    print "Test #1 : '%s'" % subber.sub(instr)
+    print(instr)
+    print("Test #1 : '%s'" % subber.sub(instr))
     
-    print re.sub("\s生快\s|\s生快$","生日快乐","祝 你 生快")
+    print(re.sub("\s生快\s|\s生快$","生日快乐","祝 你 生快"))
     
     inStr = u"I'd said he'd like to go with me"
     outStr = u"I Would said she'd like to go with me"
-    if subber.sub(inStr) == outStr: print "Test #2 PASSED"    
-    else: print "Test #2 FAILED: '%s'" % subber.sub(inStr)
+    if subber.sub(inStr) == outStr: print("Test #2 PASSED")
+    else: print("Test #2 FAILED: '%s'" % subber.sub(inStr))

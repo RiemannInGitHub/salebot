@@ -2,28 +2,55 @@
 
 <aiml version="1.0">
     <category>
-        <pattern>{SAVE:{carbrand:*}}</pattern>
+        <pattern>{ SAVE : { CARBRAND : * } }</pattern>
         <template>
             <think>
-                <set name = "carbrand"> <star index = "1"/></set>
+                <set name = "CARBRAND"> <star index = "1"/></set>
             </think>
             {MSG:OK}
         </template>
     </category>
     <category>
-        <pattern>{SAVE:{carmodel:*}}</pattern>
+        <pattern>{SAVE:{CARNAME:*}}</pattern>
         <template>
             <think>
-                <set name = "carmodel"> <star index = "1"/></set>
+                <set name = "CARNAME"> <star index = "1"/></set>
             </think>
             {MSG:OK}
         </template>
     </category>
     <category>
-        <pattern>{SAVE:{userkey:*}}</pattern>
+        <pattern>{SAVE:{CARMODEL:*}}</pattern>
         <template>
             <think>
-                <set name = "userkey"> <star index = "1"/></set>
+                <set name = "CARMODEL"> <star index = "1"/></set>
+            </think>
+            {MSG:OK}
+        </template>
+    </category>
+        <category>
+        <pattern>{SAVE:{PRICE:*}}</pattern>
+        <template>
+            <think>
+                <set name = "PRICE"> <star index = "1"/></set>
+            </think>
+            {MSG:OK}
+        </template>
+    </category>
+    <category>
+        <pattern>{SAVE:{TYPE:*}}</pattern>
+        <template>
+            <think>
+                <set name = "TYPE"> <star index = "1"/></set>
+            </think>
+            {MSG:OK}
+        </template>
+    </category>
+    <category>
+        <pattern>{SAVE:{SEATS:*}}</pattern>
+        <template>
+            <think>
+                <set name = "SEATS"> <star index = "1"/></set>
             </think>
             {MSG:OK}
         </template>

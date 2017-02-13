@@ -29,4 +29,4 @@ ask_session = xiaoi.ibotcloud.AskSession(signature_ask, params_ask)
 # demo how to get answer
 ret_ask = ask_session.get_answer(text)
 
-print 'i' + ret_ask.http_body
+print('i', ret_ask.http_body)

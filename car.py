@@ -1,21 +1,22 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/env python
+from macro import *
 
 
 class Car(object):
-    def __init__(self):
+    def __init__(self, attrlist):
         self.prize = 0
-        self.brand = ""
-        self.model = ""
+        self.parad = {}
+        for i in attrlist:
+            self.parad[i] = ""
 
     def load_car(self, carno):
         pass
 
-    def set_brand(self, value):
-        self.brand = value
+    def init_parad(self):
+        for k in self.parad.keys():
+            self.parad[k] = ""
 
-    def set_model(self, value):
-        self.model = value
 
 if __name__ == "__main__":
     # for test

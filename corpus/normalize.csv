@@ -1,0 +1,8 @@
+label,value
+PRICE,钱|万|卖|买|多钱
+TYPE,类型
+COLOR,颜色
+ENGINE,排量
+GEARBOX,档|手动档|自动档|自动挡|手动挡
+OILCONSUMPTION,油耗
+CARMODEL,|型号|版本|款式

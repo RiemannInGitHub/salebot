@@ -2,17 +2,98 @@
 
 <aiml version="1.0">
     <category>
-        <pattern>看车 CARBRAND * CARMODEL *</pattern>
+        <pattern>
+            WELCOME
+        </pattern>
         <template>
-            {"SET":{"carbrand":"<star index = "1"/>","carmodel":"<star index = "2"/>"}}
-            <think>
-                <set name = "carbrand"> <star index = "1"/></set>
-                <set name = "carmodel"> <star index = "2"/></set>
-            </think>
             <random>
-                <li>好的，知道了</li>
-                <li>ok～</li>
-                <li>请问您关心它的什么呢？</li>
+                <li>您好，请问想看什么牌子的车</li>
+                <li>您好，请问想看什么价位的车</li>
+            </random>
+        </template>
+    </category>
+    <category>
+        <pattern>SEARCH*</pattern>
+        <template>
+            {"DBSEARCH":<star index = "1"/>}
+        </template>
+    </category>
+    <category>
+        <pattern>QUERY*</pattern>
+        <template>
+            {"QUERY":<star index = "1"/>}
+        </template>
+    </category>
+    <category>
+        <pattern>ASK CARBRAND</pattern>
+        <template>
+            <random>
+                <li>请问想看什么牌子的车呢？</li>
+                <li>比较想买的品牌是哪个？</li>
+                <li>想看什么牌子的车？</li>
+            </random>
+        </template>
+    </category>
+    <category>
+        <pattern>ASK CARNAME</pattern>
+        <template>
+            <random>
+                <li>请问想看具体什么型号的？</li>
+                <li>具体的型号是什么呢？</li>
+            </random>
+        </template>
+    </category>
+    <category>
+        <pattern>ASK CARMODEL</pattern>
+        <template>
+            <random>
+                <li>想要哪种款式的？</li>
+                <li>比较喜欢的款式是哪个？</li>
+            </random>
+        </template>
+    </category>
+    <category>
+        <pattern>ASK PRICE</pattern>
+        <template>
+            <random>
+                <li>可以接受的价位是多少？</li>
+                <li>请问客人可以接受的价位是多少？</li>
+            </random>
+        </template>
+    </category>
+    <category>
+        <pattern>ASK TYPE</pattern>
+        <template>
+            <random>
+                <li>请问关心的车型是什么？</li>
+                <li>想要一辆SUV？还是一辆轿车呢？</li>
+            </random>
+        </template>
+    </category>
+    <category>
+        <pattern>ASK SEATS</pattern>
+        <template>
+            <random>
+                <li>需要买5座车？还是7座车？</li>
+                <li>车上需要有几个座位？</li>
+            </random>
+        </template>
+    </category>
+    <category>
+        <pattern>SEARCH FIN</pattern>
+        <template>
+            <random>
+                <li>好的，我们有您想找的车，想了解这辆车的什么信息？</li>
+                <li>已经为您找到想找的车辆，想详细了解这辆车的什么呢？</li>
+            </random>
+        </template>
+    </category>
+    <category>
+        <pattern>QUERY FIN KEY * VALUE *</pattern>
+        <template>
+            <random>
+                <li>这辆车的<star index="1"/>是<star index="2"/></li>
+                <li>是<star index="2"/></li>
             </random>
         </template>
     </category>

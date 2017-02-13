@@ -26,7 +26,6 @@ class AimlBrain(object):
     def save_viable(self, vianame, viavalue):
         message = "{SAVE:{" + vianame + ':' + viavalue + "}"
         logger.debug("aiml save return:" + self.respond(message))
-        print(self.respond(message))
 
     # -------------------------------------------------------------
     # function: send msg to aiml to talk with aiml

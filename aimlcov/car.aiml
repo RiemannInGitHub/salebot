@@ -21,7 +21,7 @@
     <category>
         <pattern>QUERY*</pattern>
         <template>
-            {"QUERY": "<star index = "1"/>"}
+            {"QUERY":<star index = "1"/>}
         </template>
     </category>
     <category>

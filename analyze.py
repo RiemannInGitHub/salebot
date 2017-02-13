@@ -3,11 +3,14 @@
 
 import pandas as pd
 import json
+import sys
 from macro import *
 from util import log
 from util import tool
 from fuzzywuzzy import fuzz
 
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 logger = log.get_logger(__name__)
 
@@ -75,14 +78,16 @@ class Analyze(object):
     def pattern_welcome(self, input):
         return "WELCOME"
 
-    # TODO:muliti query need to be added
     def pattern_query(self, labelinput):
         inputl = tool.cut_no_blank(labelinput)
-        output = "QUERY"
+        output = "QUERY "
+        outputl = []
         for word in inputl:
-            result, index, column = tool.df_inlude_search(self.normalizedf, word, "value")
+            result, index = tool.df_inlude_search(self.normalizedf, word, "value")
+            logger.debug("pattern_query word is " + word + "inlude_search result is " + str(result))
             if result:
-                output += ':' + self.normalizedf["label"][index]
+                outputl = tool.insert_list_norepeat(outputl, self.normalizedf["label"][index])
+        output += json.dumps(outputl)
         return output
 
     def special_price(self, inputstring):
@@ -147,7 +152,7 @@ class Analyze(object):
             logger.critical("exception: " + unicode(Exception) + ":" + unicode(e))
             log.log_traceback()
             return
-        logger.debug("pattern: " + unicode(pattern))
+        logger.info("pattern: " + unicode(pattern))
 
         try:
             output = self.gen_output(pattern, labelinput)
@@ -156,7 +161,7 @@ class Analyze(object):
             log.log_traceback()
             return
 
-        logger.debug("normalize to aiml: " + output)
+        logger.info("normalize to aiml: " + str(output))
         return output
 
 if __name__ == "__main__":

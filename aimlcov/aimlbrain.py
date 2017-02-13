@@ -10,7 +10,7 @@ logger = log.get_logger(__name__)
 class AimlBrain(object):
     def __init__(self, aimlpath=os.path.split(os.path.realpath(__file__))[0] + "/load_aiml.xml"):
         print(aimlpath)
-        self.kernel = aiml.Kernelf()
+        self.kernel = aiml.Kernel()
         self.kernel.learn(aimlpath)
         self.kernel.respond("load aiml start")
 
@@ -18,13 +18,16 @@ class AimlBrain(object):
         return self.kernel.respond(inputstr)
 
     def respond_with_viable(self, vialist, inputstr):
+        logger.debug("aiml respond_with_viable, the vialist is:" + str(vialist))
         for i in vialist:
-            inputstr.replace('*', i, 1)
+            inputstr = inputstr.replace("*", unicode(i), 1)
+        logger.debug("aiml respond_with_viable, the inputstr is:" + str(inputstr))
         return self.kernel.respond(inputstr)
 
     # TODO: use json create msg or write a func for it
     def save_viable(self, vianame, viavalue):
-        message = "{SAVE:{" + vianame + ':' + viavalue + "}"
+        logger.debug("aiml save via:" + vianame + "," + viavalue)
+        message = "{SAVE:{" + vianame + ':' + viavalue + "}}"
         logger.debug("aiml save return:" + self.respond(message))
 
     # -------------------------------------------------------------

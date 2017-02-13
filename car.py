@@ -13,6 +13,10 @@ class Car(object):
     def load_car(self, carno):
         pass
 
+    def init_parad(self):
+        for k in self.parad.keys():
+            self.parad[k] = ""
+
 
 if __name__ == "__main__":
     # for test

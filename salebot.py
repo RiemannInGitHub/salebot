@@ -7,7 +7,6 @@ import car
 import os
 import json
 import re
-import copy
 import aimlcov.tuling as tuling
 from macro import *
 from util import log
@@ -27,6 +26,7 @@ class SaleBot(object):
         self.attrlist = self.database.generate_attrlist()
         self.car = car.Car(self.attrlist)
         self.tuling = tuling.TulingBot()
+        self.genargflag = False
         self.consernarg = []
         self.msgregex = re.compile('\{.+\}')
         self.msgfunclist = {
@@ -41,54 +41,47 @@ class SaleBot(object):
         for label, value in msg.items():
             self.car.parad[label] = value
 
-    def msg_query_handle(self, keyl):
-        output = ""
-        for key in keyl:
-            lenth, value = self.database.get_label_value(key)
-            if 0 == lenth:
-                raise ValueError
-            elif 1 == lenth:
-                vialist = [key, value[0]]
-                output += self.__aiml.respond_with_viable(vialist, DIALOG[QUERYFIN]) + ";"
-            elif 1 < lenth:
-                if PRICE == key:
-                    pass
-        return output
+    def msg_query_handle(self, key):
+        lenth, value = self.database.get_label_value(key)
+        if 0 == lenth:
+            raise ValueError
+        elif 1 == lenth:
+            vialist = [key, value]
+            self.__aiml.respond_with_viable(vialist, DIALOG[QUERYFIN])
+        elif 1 < lenth:
+            if PRICE == key:
+                pass
 
     def msg_tuling_handle(self, msg):
         return 'tl' + self.tuling.tuling_auto_reply(msg)
 
-    def gen_consernarg(self, label):
-        flag = False
-
+    def gen_consernarg(self, label, oldflag):
         if len(self.consernarg) != 0:
-            return flag
+            return oldflag
         flag = True
+        self.car.init_parad()
         if CARBRAND == label:
-            self.consernarg = ARGORDER[0]
+            self.consernarg = copy.deepcopy(ARGORDER[0])
         elif CARNAME == label:
-            self.consernarg = ARGORDER[0]
+            self.consernarg = copy.deepcopy(ARGORDER[0])
         elif CARMODEL == label:
-            self.consernarg = ARGORDER[0]
+            self.consernarg = copy.deepcopy(ARGORDER[0])
         elif PRICE == label:
-            self.consernarg = ARGORDER[1]
+            self.consernarg = copy.deepcopy(ARGORDER[1])
         elif TYPE == label:
-            self.consernarg = ARGORDER[1]
+            self.consernarg = copy.deepcopy(ARGORDER[1])
         elif SEATS == label:
-            self.consernarg = ARGORDER[1]
+            self.consernarg = copy.deepcopy(ARGORDER[1])
 
-        logger.debug("[SEARCH]gen_consernarg: " + str(self.consernarg))
+        logger.debug("[SEARCH]gen_consernarg: " + str(self.consernarg) + " flag is " + str(flag))
         return flag
 
     def set_car_para(self, label, value):
         self.car.parad[label] = value
 
     def process_consernarg(self):
-        tmpconsernarg = copy.deepcopy(self.consernarg)
-        for k in tmpconsernarg:
-            logger.debug("[SEARCH]process_consernarg consernarg is " + str(self.consernarg))
+        for k in self.consernarg:
             lenth, value = self.database.get_label_value(k)
-            logger.debug("[SEARCH]key " + k + " in database lenth is " + str(lenth) + " value is " + str(value))
             if 0 == lenth:
                 raise ValueError
             if PRICE == k or CARMODEL == k:
@@ -98,17 +91,14 @@ class SaleBot(object):
             elif 1 == lenth:
                 self.set_car_para(k, value[0])
                 self.consernarg.remove(k)
-        logger.debug("[SEARCH]process_consernarg: " + str(self.consernarg))
 
     def msg_dbsearch_handle(self, msg):
-        flag = False
-
         for label, value in msg.items():
             if value != "":
-                flag = self.gen_consernarg(label)
+                self.genargflag = self.gen_consernarg(label, self.genargflag)
                 self.set_car_para(label, value)
                 self.__aiml.save_viable(label, value)
-        self.database.query_by_condition(self.car.parad, flag)
+        self.database.query_by_condition(self.car.parad, self.genargflag)
         self.process_consernarg()
 
         if 0 == len(self.consernarg):
@@ -136,7 +126,6 @@ class SaleBot(object):
             # TODO: add a decorator for log exception
             try:
                 msg = json.loads(string)
-                logger.debug("parse msg is:" + str(msg))
             except Exception as e:
                 logger.critical("exception: " + unicode(Exception) + ":" + unicode(e))
                 log.log_traceback()

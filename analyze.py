@@ -77,23 +77,29 @@ class Analyze(object):
 
     def classify_word(self, word, strlist):
         strindex = strlist.index(word)
+        label = ""
+        value = ""
         result, index, wordstr = tool.df_inlude_search(self.searchdf, strlist[strindex:], "value", False)
+
         if result is False:
-            return result
+            logger.debug("[SETLABEL]no need to classify, the word is" + word)
+            return result, label, value, wordstr
         label = self.searchdf["label"][index]
         if label is PRICE:
             value = self.price_process(wordstr)
         else:
             value = wordstr
+        logger.debug("[SETLABEL]classify word:" + word + "result is " + str(result) + " wordstr is " + wordstr)
+        logger.debug("[SETLABEL]classify word:" + word + "label is " + label + " value is " + value)
         return result, label, value, wordstr
 
     # TODO:for price and model the include problem not solved, need to write a func for it
     def set_label(self, inputstr):
         labelrinput = inputstr
         labelinput = inputstr
-        result = tool.cut_no_blank(inputstr)
-        for word in result:
-            result, label, value, originstr = self.classify_word(word, result)
+        cutlist = tool.cut_no_blank(inputstr)
+        for word in cutlist:
+            result, label, value, originstr = self.classify_word(word, cutlist)
             if result:
                 labelrinput = labelrinput.replace(originstr, value, 1)
                 labelinput = labelinput.replace(originstr, label + " " + value + " ", 1)

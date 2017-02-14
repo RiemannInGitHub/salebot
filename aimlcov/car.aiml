@@ -97,4 +97,13 @@
             </random>
         </template>
     </category>
+    <category>
+        <pattern>QUERY FIN KEY * VALUE *</pattern>
+        <template>
+            <random>
+                <li>这辆车的<star index="1"/>是<star index="2"/></li>
+                <li>是<star index="2"/></li>
+            </random>
+        </template>
+    </category>
 </aiml>

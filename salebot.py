@@ -54,10 +54,10 @@ class SaleBot(object):
                 raise ValueError
             elif 1 == lenth:
                 vialist = [key, value[0]]
-                output += self.__aiml.respond_with_viable(vialist, DIALOG[QUERYFIN]) + ";"
+                output += self.__aiml.respond_with_viable(lenth, vialist, DIALOG[QUERYFIN]) + ";"
             elif 1 < lenth:
-                if PRICE == key:
-                    pass
+                vialist = [key, value]
+                output += self.__aiml.respond_with_viable(lenth, vialist, DIALOG[QUERYFINMULTI]) + ";"
         return output
 
     def msg_tuling_handle(self, msg):

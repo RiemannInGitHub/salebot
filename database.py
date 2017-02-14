@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import pandas as pd
-import json
+import re
 from util import log
 from macro import *
 
@@ -26,6 +26,24 @@ class Database(object):
         df = pd.read_json(testdb)
         return df.columns.values
 
+    @staticmethod
+    def price_fliter(column, condition, df):
+        indexl = []
+        paral = condition.splite("-")
+        for valuestr in df[column].values:
+            valuei = int(re.search('/d+', valuestr))
+            if paral[0] <= valuei <= paral[1]:
+                indexl.append(df[column].values.index(df[column].values))
+        return df.loc[indexl, :]
+
+    @staticmethod
+    def contain_filter(column, condition, df):
+        indexl = []
+        for valuestr in df[column].values:
+            if valuestr.find(condition):
+                indexl.append(df[column].values.index(df[column].values))
+        return df.loc[indexl, :]
+
     # flag-true query from result, flag-false query from cardb & refresh result
     # TODO: if api return db less than 100, get all of it; else keep ask user add more condition
     def query_by_condition(self, condition, flag):
@@ -35,11 +53,13 @@ class Database(object):
         else:
             self.result = self.fliter_dataframe(condition, self.result)
 
-    @staticmethod
-    def fliter_dataframe(condition, df):
+    def fliter_dataframe(self, condition, df):
         for k, v in condition.iteritems():
             if v != "":
-                df = df.loc[df[k] == v]
+                if k == PRICE:
+                    df = self.price_fliter(k, v, df)
+                else:
+                    df = self.contain_filter(k, v, df)
         logger.debug("fliter condition is:" + str(condition))
         logger.debug("database result change to:\n" + str(df))
         return df
@@ -56,5 +76,4 @@ if __name__ == "__main__":
     # for test
     database = Database()
     lenth, value = database.get_label_value(PRICE)
-    database.generate_attrdict()
     logger.warning("success")

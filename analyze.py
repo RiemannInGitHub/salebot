@@ -49,17 +49,21 @@ class Analyze(object):
             index += 1
         if v == "equal":
             numl = re.findall('/d+', wordstr)
-            value = numl[0]
+            minn = int(numl[0]) - 5
+            maxn = int(numl[0]) + 5
+            value = str(maxn) + '-' + str(minn)
         elif v == "between":
             numl = re.findall('/d+', wordstr)
             numl.sort()
-            value = numl[0] + '-' + numl[1]
+            minn = int(numl[0]) - 5
+            maxn = int(numl[1]) + 5
+            value = str(maxn) + '-' + str(minn)
         elif v == "greater":
             numl = re.findall('/d+', wordstr)
-            value = numl[0] + '-'
+            value = numl[0] + '-' + str(UTIMAXPRICE)
         elif v == "less":
             numl = re.findall('/d+', wordstr)
-            value = "-" + numl[0]
+            value = str(0) + "-" + numl[0]
         elif v == "around":
             numl = re.findall('/d+', wordstr)
             basenum = int(numl[0])

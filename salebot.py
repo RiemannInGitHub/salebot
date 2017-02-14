@@ -53,11 +53,16 @@ class SaleBot(object):
             if 0 == lenth:
                 raise ValueError
             elif 1 == lenth:
-                vialist = [key, value[0]]
-                output += self.__aiml.respond_with_viable(lenth, vialist, DIALOG[QUERYFIN]) + ";"
+                output += self.__aiml.respond_with_viable([key, value[0]], DIALOG[QUERYFIN]) + ";"
             elif 1 < lenth:
-                vialist = [key, value]
-                output += self.__aiml.respond_with_viable(lenth, vialist, DIALOG[QUERYFINMULTI]) + ";"
+                output += self.__aiml.respond_with_viable([key], DIALOG[MULTIKEY]) + ";"
+                carnum, carlist = self.database.get_label_value(CARMODEL)
+                output += self.__aiml.respond_with_viable([carnum], DIALOG[MULTIKEY]) + ";"
+                for index, row in self.database.result.iterrows():
+                    cardesc = row[CARBRAND] + row[CARNAME] + row[CARMODEL]
+                    cardesc = cardesc.replace(" ", "")
+                    vialist = [cardesc, key, row[key]]
+                    output += self.__aiml.respond_with_viable(vialist, DIALOG[MULTIKEY]) + ";"
         return output
 
     def msg_tuling_handle(self, msg):

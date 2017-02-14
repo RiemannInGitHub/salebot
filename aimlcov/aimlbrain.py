@@ -17,16 +17,14 @@ class AimlBrain(object):
     def respond(self, inputstr):
         return self.kernel.respond(inputstr)
 
-    def respond_with_viable(self, lenth, vialist, pattern):
+    def respond_with_viable(self, vialist, pattern):
+        inputstr = ""
         logger.debug("aiml respond_with_viable, the vialist is:" + str(vialist))
-        if 1 == lenth:
-            for i in vialist:
-                inputstr = pattern.replace("*", unicode(i), 1)
-        else:
-            pass
+        for i in vialist:
+            inputstr = pattern.replace("*", unicode(i), 1)
         logger.debug("aiml respond_with_viable, the inputstr is:" + str(inputstr))
         output = self.kernel.respond(inputstr)
-        logger.debug("aiml respond is:" + output)
+        logger.debug("aiml respond is:" + str(output))
         return output
 
     # -------------------------------------------------------------

@@ -1,5 +1,8 @@
 question,category
+我想看辆车,WELCOME
+我要看辆车,WELCOME
 20万到30万的车有哪些推荐的,SEARCH
+我想看辆二三十万的车,SEARCH
 我要买一辆中型SUV，最近有什么新款没有,SEARCH
 你这有长安的车么？,SEARCH
 我想看一辆长安的车,SEARCH
@@ -10,6 +13,7 @@ question,category
 你这有C15的车么？,SEARCH
 这辆车多少钱,QUERY
 多少钱,QUERY
+价格是多少,QUERY
 都有什么颜色,QUERY
 排量多少,QUERY
 手动档还是自动档？,QUERY

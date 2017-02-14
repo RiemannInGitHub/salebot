@@ -22,8 +22,8 @@ class SaleBot(object):
         self.username = ""
         self.userkey = userkey
         self.carlist = []
+        self.analyze = analyze.Analyze()
         self.database = database.Database()
-        self.analyze = analyze.Analyze(self.database.generate_attrdict())
         self.attrlist = self.database.generate_attrlist()
         self.car = car.Car(self.attrlist)
         self.tuling = tuling.TulingBot()

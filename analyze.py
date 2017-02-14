@@ -4,6 +4,7 @@
 import pandas as pd
 import json
 import sys
+import re
 from macro import *
 from util import log
 from util import tool
@@ -16,11 +17,10 @@ logger = log.get_logger(__name__)
 
 
 class Analyze(object):
-    def __init__(self, labeldict):
-        self.labeldict = labeldict
+    def __init__(self):
         self.patterndf = pd.read_csv("corpus/pattern.csv")
-        self.normalizedf = pd.read_csv("corpus/querydict.csv")
-        self.lastlabel = ""
+        self.querydf = pd.read_csv("corpus/querydict.csv")
+        self.searchdf = pd.read_csv("corpus/searchdict.csv")
         self.gen_funclist = {
             None: self.pattern_none,
             "WELCOME": self.pattern_welcome,
@@ -30,38 +30,69 @@ class Analyze(object):
             "SEARCHQUERY": self.pattern_searchquery,
             "COMPARE": self.pattern_compare
         }
-        self.special_key = {
-            PRICE: [self.price_setlabel, self.price_normalize],
-            CARMODEL: [self.model_setlabel, self.model_normalize],
-        }
+        self.price = ""
+        self.price_pattern = {re.compile(u'\d+万到\d+万'): "between",
+                              re.compile(u'\d+万'): "equal",
+                              re.compile(u'大于\d+万'): "greater",
+                              re.compile(u'小于\d+万'): "less",
+                              re.compile(u'\d+万左右'): "around",
+                              re.compile(u'\d{2}十万'): "between10",
+                              re.compile(u'\d{2}十万左右'): "between10"}
 
-    def price_setlabel(self):
-        pass
+    def price_process(self, wordstr):
+        value = wordstr
+        index = 0
+        v = ""
+        for m, v in self.price_pattern:
+            if m.match(wordstr):
+                break
+            index += 1
+        if v == "equal":
+            numl = re.findall('/d+', wordstr)
+            value = numl[0]
+        elif v == "between":
+            numl = re.findall('/d+', wordstr)
+            numl.sort()
+            value = numl[0] + '-' + numl[1]
+        elif v == "greater":
+            numl = re.findall('/d+', wordstr)
+            value = numl[0] + '-'
+        elif v == "less":
+            numl = re.findall('/d+', wordstr)
+            value = "-" + numl[0]
+        elif v == "around":
+            numl = re.findall('/d+', wordstr)
+            basenum = int(numl[0])
+            value = str(basenum - 5) + '-' + str(basenum + 5)
+        elif v == "between10":
+            numl = re.findall('/d', wordstr)
+            minn = int(numl[0]) * 10 - 5
+            maxn = int(numl[1]) * 10 + 5
+            value = str(maxn) + '-' + str(minn)
+        return value
 
-    def model_setlabel(self):
-        pass
-
-    def classify_word(self, word, string):
-        result = False
-        label = ""
-        value = ""
-        replacevalue = ""
-
-        labell = [k for k, v in self.labeldict.iteritems() if word in v.values()]
-        return result, label, value, replacevalue
+    def classify_word(self, word, strlist):
+        strindex = strlist.index(word)
+        result, index, wordstr = tool.df_inlude_search(self.searchdf, strlist[strindex:], "value", False)
+        if result is False:
+            return result
+        label = self.searchdf["label"][index]
+        if label is PRICE:
+            value = self.price_process(wordstr)
+        else:
+            value = wordstr
+        return result, label, value, wordstr
 
     # TODO:for price and model the include problem not solved, need to write a func for it
     def set_label(self, inputstr):
         labelrinput = inputstr
         labelinput = inputstr
         result = tool.cut_no_blank(inputstr)
-        index = 0
         for word in result:
-            result, label, value, replacevalue = self.classify_word(word, inputstr)
+            result, label, value, originstr = self.classify_word(word, result)
             if result:
-                labelrinput = labelrinput.replace(replacevalue, value, 1)
-                labelinput = labelinput.replace(replacevalue, label + " " + value, 1)
-            index += 1
+                labelrinput = labelrinput.replace(originstr, value, 1)
+                labelinput = labelinput.replace(originstr, label + " " + value + " ", 1)
         return labelinput, labelrinput
 
     def search(self, labelrinput):
@@ -87,7 +118,7 @@ class Analyze(object):
     def pattern_none(self, inputstr):
         return inputstr
 
-    def pattern_welcome(self, input):
+    def pattern_welcome(self, inputstr):
         return "WELCOME"
 
     def pattern_query(self, labelinput):
@@ -95,34 +126,23 @@ class Analyze(object):
         output = "QUERY "
         outputl = []
         for word in inputl:
-            result, index = tool.df_inlude_search(self.normalizedf, word, "value")
+            strindex = inputl.index(word)
+            result, index = tool.df_inlude_search(self.querydf, inputl[strindex:], "value", False)
             logger.debug("[QUERY]pattern_query word is " + word + "inlude_search result is " + str(result))
             if result:
-                outputl = tool.insert_list_norepeat(outputl, self.normalizedf["label"][index])
+                outputl = tool.insert_list_norepeat(outputl, self.querydf["label"][index])
         output += json.dumps(outputl)
         return output
 
-    def price_normalize(self):
-        pass
-
-    def model_normalize(self):
-        pass
-
     def pattern_search(self, labelinput):
-        inputl = tool.cut_no_blank(labelinput)
+        inputl = tool.cut(labelinput)
         output = "SEARCH "
         outputd = {}
         index = 0
-
         for word in inputl:
-            if word in self.special_key.keys():
-                s, inputl = self.special_key[word][1](inputl)
-                outputd[word] = unicode(s)
-            elif word in self.labeldict.keys():
-                # TODO: fuzzy match should be consider&design, now is too specific
-                outputd[word] = inputl[index + 1]
+            if word in self.searchdf["label"].values:
+                outputd[word] = "".join(inputl[index+2: inputl[index + 1:].index(" ")])
             index += 1
-
         output += json.dumps(outputd)
         return output
 

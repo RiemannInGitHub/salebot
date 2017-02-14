@@ -22,12 +22,6 @@ class Database(object):
         self.result = pd.DataFrame()
 
     @staticmethod
-    def generate_attrdict():
-        df = pd.read_json(testdb)
-        dfdict = df.to_dict()
-        return dfdict
-
-    @staticmethod
     def generate_attrlist():
         df = pd.read_json(testdb)
         return df.columns.values

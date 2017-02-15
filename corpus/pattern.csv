@@ -8,9 +8,9 @@ question,category
 我想看一辆长安的车,SEARCH
 我想看辆长安的车,SEARCH
 目前都有什么车在卖？,SEARCH
-给我看一辆长安C15的车,SEARCH
-我想看长安C15的车,SEARCH
-你这有C15的车么？,SEARCH
+给我看一辆长安CS15的车,SEARCH
+我想看长安CS15的车,SEARCH
+你这有CS15的车么？,SEARCH
 这辆车多少钱,QUERY
 多少钱,QUERY
 价格是多少,QUERY
@@ -35,4 +35,4 @@ question,category
 各自的配置是什么样？,FUZZYQUERY
 有什么安全装备？,FUZZYQUERY
 内饰是什么样的？,FUZZYQUERY
-问下长安C15的车现在怎么卖？,SEARCHQUERY
+问下长安CS15的车现在怎么卖？,SEARCHQUERY

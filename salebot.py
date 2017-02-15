@@ -66,7 +66,7 @@ class SaleBot(object):
         return output
 
     def msg_tuling_handle(self, msg):
-        return 'tl' + self.tuling.tuling_auto_reply(msg)
+        return self.tuling.tuling_auto_reply(msg)
 
     def gen_consernarg(self, label, oldflag):
         if len(self.consernarg) != 0:

@@ -39,9 +39,10 @@ class Database(object):
     @staticmethod
     def contain_filter(column, condition, df):
         indexl = []
-        for valuestr in df[column].values:
-            if valuestr.find(condition):
-                indexl.append(df[column].values.index(df[column].values))
+        for index, row in df.iterrows():
+            valuestr = row[column]
+            if valuestr.find(condition) != -1:
+                indexl.append(index)
         return df.loc[indexl, :]
 
     # flag-true query from result, flag-false query from cardb & refresh result

@@ -3,8 +3,10 @@
 
 
 class User(object):
-    def __init__(self, attrlist):
-        pass
+    def __init__(self, userid):
+        self.userid = userid
+        self.username = ""
+        self.carlist = []
 
 
 if __name__ == "__main__":

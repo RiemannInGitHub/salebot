@@ -18,8 +18,6 @@ testdb = '[\
 
 
 class Database(object):
-    def __init__(self):
-        self.result = pd.DataFrame()
 
     @staticmethod
     def generate_attrlist():
@@ -47,14 +45,25 @@ class Database(object):
                 indexl.append(index)
         return df.loc[indexl, :]
 
+    @staticmethod
+    def get_label_value(label, df):
+        result = []
+        valuel = df[label].values
+        for i in valuel:
+            if i not in result:
+                result.append(i)
+        return len(result), result
+
     # flag-true query from result, flag-false query from cardb & refresh result
     # TODO: if api return db less than 100, get all of it; else keep ask user add more condition
-    def query_by_condition(self, condition, flag):
+    def query_by_condition(self, condition, flag, df):
         logger.debug("database query flag is " + str(flag) + " :(true)from db,(false)from result")
         if flag:
-            self.result = self.fliter_dataframe(condition, pd.read_json(testdb))
+            result = self.fliter_dataframe(condition, pd.read_json(testdb))
         else:
-            self.result = self.fliter_dataframe(condition, self.result)
+            result = self.fliter_dataframe(condition, df)
+
+        return result
 
     def fliter_dataframe(self, condition, df):
         for k, v in condition.iteritems():
@@ -67,16 +76,8 @@ class Database(object):
         logger.debug("database result change to:\n" + str(df))
         return df
 
-    def get_label_value(self, label):
-        result = []
-        valuel = self.result[label].values
-        for i in valuel:
-            if i not in result:
-                result.append(i)
-        return len(result), result
 
 if __name__ == "__main__":
     # for test
     database = Database()
-    lenth, value = database.get_label_value(PRICE)
     logger.warning("success")

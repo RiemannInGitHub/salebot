@@ -149,7 +149,7 @@ class SaleBot(object):
             # TODO: add a decorator for log exception
             try:
                 msg = json.loads(string)
-                logger.debug("parse msg is:" + str(msg))
+                # logger.debug("parse msg is:" + str(msg))
             except Exception as e:
                 logger.critical("exception: " + unicode(Exception) + ":" + unicode(e))
                 log.log_traceback()
@@ -167,7 +167,7 @@ class SaleBot(object):
         else:
             output = response
 
-        logger.info("output: " + output)
+        logger.info("final output: " + output)
         return output
 
     # -------------------------------------------------------------

@@ -31,6 +31,9 @@ DIALOG = {
     MULTIRESULT: "MULTIRESULT MODEL * KEY * VALUE *"
 }
 
+# TODO: create a log class for more detailed log controller
+LOG_SHOW = False
+
 UTIMAXPRICE = 65535
 
 ARGORDER = [[u"CARBRAND", u"CARNAME", u"CARMODEL", u"PRICE", u"TYPE", u"SEATS"],

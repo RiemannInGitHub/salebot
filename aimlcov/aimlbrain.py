@@ -18,12 +18,12 @@ class AimlBrain(object):
         return self.kernel.respond(inputstr)
 
     def respond_with_viable(self, vialist, pattern):
-        logger.debug("aiml respond_with_viable, the vialist is:" + str(vialist))
+        logger.debug("[respond_with_viable]the vialist:" + str(vialist))
         for i in vialist:
             pattern = pattern.replace("*", str(i), 1)
-        logger.debug("aiml respond_with_viable, the inputstr is:" + str(pattern))
+        logger.debug("[respond_with_viable]the inputstr:" + str(pattern))
         output = self.kernel.respond(pattern)
-        logger.debug("aiml respond is:" + str(output))
+        logger.debug("[respond_with_viable]aiml respond:" + str(output))
         return output
 
     # -------------------------------------------------------------

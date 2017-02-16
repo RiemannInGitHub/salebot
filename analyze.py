@@ -86,7 +86,7 @@ class Analyze(object):
         result, index, wordstr, endindex = tool.df_inlude_search(self.searchdf, strlist, "value", False)
 
         if not result:
-            logger.debug("[SETLABEL]False:(word)" + word)
+            # logger.debug("[SETLABEL]False:(word)" + word)
             return result
         label = self.searchdf["label"][index]
         if label == PRICE:
@@ -98,7 +98,7 @@ class Analyze(object):
         self._label_para["wordstr"] = wordstr
         self._label_para["endindex"] = endindex
         self._label_para["label"] = label
-        logger.debug("[SETLABEL]TRUE :(word)" + wordstr + "(label)" + label + "(value)" + value)
+        # logger.debug("[SETLABEL]TRUE :(word)" + wordstr + "(label)" + label + "(value)" + value)
         return result
 
     # TODO:for price and model the include problem not solved, need to write a func for it
@@ -133,7 +133,6 @@ class Analyze(object):
             # logger.debug("labelrquestion is " + str(labelrquestion))
             # logger.debug("tmpscore is " + str(tmpscore))
 
-        logger.debug("[PATTERN]labelrinput is " + labelrinput)
         logger.debug("[PATTERN]most likely pattern is " + self.patterndf["question"][score["index"]])
         logger.debug("[PATTERN]pattern max score is " + str(score["score"]))
 
@@ -152,8 +151,8 @@ class Analyze(object):
         for word in inputl:
             strindex = inputl.index(word)
             result, index, _, _ = tool.df_inlude_search(self.querydf, inputl[strindex:], "value", False)
-            logger.debug("[QUERY]pattern_query word is " + word + "inlude_search result is " + str(result))
             if result:
+                logger.debug("[QUERY]word：" + word + " query label is " + self.querydf["label"][index])
                 outputl = tool.insert_list_norepeat(outputl, self.querydf["label"][index])
         output += json.dumps(outputl)
         return output
@@ -188,7 +187,7 @@ class Analyze(object):
     # return: output -- normalized input
     # -------------------------------------------------------------
     def normalize(self, inputstr):
-        logger.info("input: " + inputstr)
+        logger.info("[NORMALIZE]input: " + inputstr)
 
         try:
             labelinput, labelrinput = self.set_label(inputstr)
@@ -196,8 +195,8 @@ class Analyze(object):
             logger.critical("exception: " + unicode(Exception) + ":" + unicode(e))
             log.log_traceback()
             return
-        logger.info("input with label: " + labelinput)
-        logger.info("input replaced label: " + labelrinput)
+        logger.info("[NORMALIZE]input_with_label: " + labelinput)
+        logger.info("[NORMALIZE]input_repl_label: " + labelrinput)
 
         try:
             pattern = self.search(labelrinput)
@@ -205,7 +204,7 @@ class Analyze(object):
             logger.critical("exception: " + unicode(Exception) + ":" + unicode(e))
             log.log_traceback()
             return
-        logger.info("pattern: " + unicode(pattern))
+        logger.info("[NORMALIZE]pattern: " + unicode(pattern))
         if pattern is None:
             return inputstr
 
@@ -216,7 +215,7 @@ class Analyze(object):
             log.log_traceback()
             return
 
-        logger.info("normalize to aiml: " + str(output))
+        logger.info("[NORMALIZE]normalize to aiml: " + str(output))
         return output
 
 if __name__ == "__main__":

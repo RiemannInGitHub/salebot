@@ -13,12 +13,16 @@ year_re = re.compile('20\d{2}')
 num_dict = {u"一": "1", u"二": "2", u"三": "3", u"四": "4", u"五": "5", u"六": "6", u"七": "7", u"八": "8", u"九": "9"}
 label_dict = {"<y>": year_re, "<d>": num_re}
 
+
 # TODO: add a new func to change to num
-for k, v in num_dict.iteritems():
-    string = string.replace(k, v)
+def num_process(string):
+    for k, v in num_dict.iteritems():
+        string = string.replace(k, v)
+    return string
+
 
 def label_process(string):
-
+    string = num_process(string)
     for label, regex in label_dict.iteritems():
         string = regex.sub(label, string)
     return string
@@ -45,7 +49,7 @@ def df_inlude_search(df, strlist, column, paraflag):
                 break
             if labelcmpword == labelvalue:
                 result = True
-                wordstr =
+                wordstr = valuestr
                 break
         if result:
             wordstr = cmpword

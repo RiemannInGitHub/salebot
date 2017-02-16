@@ -383,7 +383,7 @@ class Kernel:
 
         # run the input through the 'normal' subber
         # 将输入内容根据中文分词
-        input=u' '.join(splitChinese(input))
+        input = u' '.join(splitChinese(input))
 
         if input.find(" ") < 0 :
             input=" "+input

@@ -29,11 +29,13 @@ class Database(object):
     @staticmethod
     def price_fliter(column, condition, df):
         indexl = []
-        paral = condition.splite("-")
-        for valuestr in df[column].values:
-            valuei = int(re.search('/d+', valuestr))
-            if paral[0] <= valuei <= paral[1]:
-                indexl.append(df[column].values.index(df[column].values))
+        paral = condition.split("-")
+        for index, row in df.iterrows():
+            valuestr = row[column]
+            num = re.search('\d+(.\d+)?', valuestr)
+            if num is not None:
+                if float(paral[0]) <= float(num.group()) <= float(paral[1]):
+                    indexl.append(index)
         return df.loc[indexl, :]
 
     @staticmethod

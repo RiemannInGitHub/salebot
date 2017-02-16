@@ -57,12 +57,12 @@ class SaleBot(object):
             elif 1 < lenth:
                 output += self.__aiml.respond_with_viable([key], DIALOG[MULTIKEY]) + ";"
                 carnum, carlist = self.database.get_label_value(CARMODEL)
-                output += self.__aiml.respond_with_viable([carnum], DIALOG[MULTIKEY]) + ";"
+                output += self.__aiml.respond_with_viable([carnum], DIALOG[CARNUM]) + ";"
                 for index, row in self.database.result.iterrows():
                     cardesc = row[CARBRAND] + row[CARNAME] + row[CARMODEL]
                     cardesc = cardesc.replace(" ", "")
                     vialist = [cardesc, key, row[key]]
-                    output += self.__aiml.respond_with_viable(vialist, DIALOG[MULTIKEY]) + ";"
+                    output += self.__aiml.respond_with_viable(vialist, DIALOG[MULTIRESULT]) + ";"
         return output
 
     def msg_tuling_handle(self, msg):

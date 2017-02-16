@@ -46,9 +46,11 @@ class Analyze(object):
             _, row["question"] = self.set_label(row["question"])
 
     def price_process(self, wordstr):
+        wordstr = tool.num_process(wordstr)
         value = wordstr
         v = ""
         num_re = re.compile(u'\d+')
+        num_one_re = re.compile(u'\d')
         for m, v in self.price_pattern.iteritems():
             if m.match(wordstr):
                 break
@@ -56,7 +58,7 @@ class Analyze(object):
             numl = num_re.findall(wordstr)
             minn = int(numl[0]) - 5
             maxn = int(numl[0]) + 5
-            value = str(maxn) + '-' + str(minn)
+            value = str(minn) + '-' + str(maxn)
         elif v == "between":
             numl = num_re.findall(wordstr)
             numl.sort()
@@ -74,10 +76,10 @@ class Analyze(object):
             basenum = int(numl[0])
             value = str(basenum - 5) + '-' + str(basenum + 5)
         elif v == "between10":
-            numl = num_re.findall(wordstr)
+            numl = num_one_re.findall(wordstr)
             minn = int(numl[0]) * 10 - 5
             maxn = int(numl[1]) * 10 + 5
-            value = str(maxn) + '-' + str(minn)
+            value = str(minn) + '-' + str(maxn)
         return value
 
     def classify_word(self, word, strlist):
@@ -149,7 +151,7 @@ class Analyze(object):
         outputl = []
         for word in inputl:
             strindex = inputl.index(word)
-            result, index = tool.df_inlude_search(self.querydf, inputl[strindex:], "value", False)
+            result, index, _, _ = tool.df_inlude_search(self.querydf, inputl[strindex:], "value", False)
             logger.debug("[QUERY]pattern_query word is " + word + "inlude_search result is " + str(result))
             if result:
                 outputl = tool.insert_list_norepeat(outputl, self.querydf["label"][index])

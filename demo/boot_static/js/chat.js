@@ -67,7 +67,7 @@ jQuery.postJSON = function(url, args, callback) {
     args._xsrf = getCookie("_xsrf");
     $.ajax({url: url, data: $.param(args), dataType: "text", type: "POST",
             success: function(response) {
-        if (callback) callback(eval("(" + response + ")"));
+        if (callback) callback(eval(response));
     }, error: function(response) {
         console.log("ERROR:", response);
     }});
@@ -131,7 +131,6 @@ var updater = {
         updater.cursor = response.cursor;
         var messages = response.messages;
         updater.cursor = messages[messages.length - 1].id;
-        console.log(messages.length, "new messages, cursor:", updater.cursor);
         for (var i = 0; i < messages.length; i++) {
             updater.showMessage(messages[i]);
         }

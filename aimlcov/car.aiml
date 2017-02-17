@@ -97,4 +97,25 @@
             </random>
         </template>
     </category>
+    <category>
+        <pattern>MULTIKEY *</pattern>
+        <template>
+            不同车型的<star index="1"/>不同
+        </template>
+    </category>
+    <category>
+        <pattern>CARNUM *</pattern>
+        <template>
+            <random>
+                <li>目前有<star index="1"/>辆车</li>
+                <li>现在有<star index="1"/>辆车符合条件</li>
+            </random>
+        </template>
+    </category>
+    <category>
+        <pattern>MULTIRESULT MODEL * KEY * VALUE *</pattern>
+        <template>
+            <star index="1"/>的<star index="2"/>是<star index="3"/>
+        </template>
+    </category>
 </aiml>

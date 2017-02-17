@@ -17,18 +17,14 @@ class AimlBrain(object):
     def respond(self, inputstr):
         return self.kernel.respond(inputstr)
 
-    def respond_with_viable(self, vialist, inputstr):
-        logger.debug("aiml respond_with_viable, the vialist is:" + str(vialist))
+    def respond_with_viable(self, vialist, pattern):
+        logger.debug("[respond_with_viable]the vialist:" + str(vialist))
         for i in vialist:
-            inputstr = inputstr.replace("*", unicode(i), 1)
-        logger.debug("aiml respond_with_viable, the inputstr is:" + str(inputstr))
-        return self.kernel.respond(inputstr)
-
-    # TODO: use json create msg or write a func for it
-    def save_viable(self, vianame, viavalue):
-        logger.debug("aiml save via:" + vianame + "," + viavalue)
-        message = "{SAVE:{" + vianame + ':' + viavalue + "}}"
-        logger.debug("aiml save return:" + self.respond(message))
+            pattern = pattern.replace("*", str(i), 1)
+        logger.debug("[respond_with_viable]the inputstr:" + str(pattern))
+        output = self.kernel.respond(pattern)
+        logger.debug("[respond_with_viable]aiml respond:" + str(output))
+        return output
 
     # -------------------------------------------------------------
     # function: send msg to aiml to talk with aiml
@@ -36,8 +32,11 @@ class AimlBrain(object):
     # return: output -- result
     # describe: aiml is an independent module, so by sendmsg to let it remember or answer sth
     # -------------------------------------------------------------
-    def send_msg(self, msg):
-        return self.kernel.respond(msg)
+    def save_viable(self, vianame, viavalue):
+        logger.debug("aiml save via:" + vianame + "," + viavalue)
+        message = "{SAVE:{" + vianame + ':' + viavalue + "}}"
+        logger.debug("aiml save return:" + self.respond(message))
+
 
 if __name__ == "__main__":
     # for test

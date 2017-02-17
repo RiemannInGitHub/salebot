@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import pandas as pd
-import json
+import re
 from util import log
 from macro import *
 
@@ -18,50 +18,66 @@ testdb = '[\
 
 
 class Database(object):
-    # link db which contain car's data
-    def __init__(self):
-        self.result = pd.DataFrame()
-
-    @staticmethod
-    def generate_attrdict():
-        df = pd.read_json(testdb)
-        dfdict = df.to_dict()
-        return dfdict
 
     @staticmethod
     def generate_attrlist():
         df = pd.read_json(testdb)
         return df.columns.values
 
-    # flag-true query from result, flag-false query from cardb & refresh result
-    # TODO: if api return db less than 100, get all of it; else keep ask user add more condition
-    def query_by_condition(self, condition, flag):
-        logger.debug("database query flag is " + str(flag) + " :(true)from db,(false)from result")
-        if flag:
-            self.result = self.fliter_dataframe(condition, pd.read_json(testdb))
-        else:
-            self.result = self.fliter_dataframe(condition, self.result)
+    @staticmethod
+    def price_fliter(column, condition, df):
+        indexl = []
+        paral = condition.split("-")
+        for index, row in df.iterrows():
+            valuestr = row[column]
+            num = re.search('\d+(.\d+)?', valuestr)
+            if num is not None:
+                if float(paral[0]) <= float(num.group()) <= float(paral[1]):
+                    indexl.append(index)
+        return df.loc[indexl, :]
 
     @staticmethod
-    def fliter_dataframe(condition, df):
-        for k, v in condition.iteritems():
-            if v != "":
-                df = df.loc[df[k] == v]
-        logger.debug("fliter condition is:" + str(condition))
-        logger.debug("database result change to:\n" + str(df))
-        return df
+    def contain_filter(column, condition, df):
+        indexl = []
+        for index, row in df.iterrows():
+            valuestr = row[column]
+            if valuestr.find(condition) != -1:
+                indexl.append(index)
+        return df.loc[indexl, :]
 
-    def get_label_value(self, label):
+    @staticmethod
+    def get_label_value(label, df):
         result = []
-        valuel = self.result[label].values
+        valuel = df[label].values
         for i in valuel:
             if i not in result:
                 result.append(i)
         return len(result), result
 
+    # flag-true query from result, flag-false query from cardb & refresh result
+    # TODO: if api return db less than 100, get all of it; else keep ask user add more condition
+    def query_by_condition(self, condition, flag, df):
+        logger.debug("database query flag is " + str(flag) + " :(true)from db,(false)from result")
+        if flag:
+            result = self.fliter_dataframe(condition, pd.read_json(testdb))
+        else:
+            result = self.fliter_dataframe(condition, df)
+
+        return result
+
+    def fliter_dataframe(self, condition, df):
+        for k, v in condition.iteritems():
+            if v != "":
+                if k == PRICE:
+                    df = self.price_fliter(k, v, df)
+                else:
+                    df = self.contain_filter(k, v, df)
+        logger.debug("fliter condition is:" + str(condition))
+        logger.debug("database result change to:\n" + str(df))
+        return df
+
+
 if __name__ == "__main__":
     # for test
     database = Database()
-    lenth, value = database.get_label_value(PRICE)
-    database.generate_attrdict()
     logger.warning("success")

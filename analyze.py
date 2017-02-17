@@ -4,6 +4,7 @@
 import pandas as pd
 import json
 import sys
+import re
 from macro import *
 from util import log
 from util import tool
@@ -16,12 +17,11 @@ logger = log.get_logger(__name__)
 
 
 class Analyze(object):
-    def __init__(self, labeldict):
-        self.labeldict = labeldict
-        self.patterndf = pd.read_csv("corpus/pattern.csv")
-        self.normalizedf = pd.read_csv("corpus/normalize.csv")
+    def __init__(self):
+        self.patterndf = pd.read_csv("corpus/pattern.csv", encoding="utf_8")
+        self.querydf = pd.read_csv("corpus/querydict.csv", encoding="utf_8")
+        self.searchdf = pd.read_csv("corpus/searchdict.csv", encoding="utf_8")
         self.gen_funclist = {
-            None: self.pattern_none,
             "WELCOME": self.pattern_welcome,
             "QUERY": self.pattern_query,
             "SEARCH": self.pattern_search,
@@ -29,53 +29,119 @@ class Analyze(object):
             "SEARCHQUERY": self.pattern_searchquery,
             "COMPARE": self.pattern_compare
         }
-        self.special_key = {
-            PRICE: self.special_price,
-            CARMODEL: self.special_carmodel,
-        }
+        self.price = ""
+        self.price_pattern = {re.compile(u'\d+万到\d+万'): "between",
+                              re.compile(u'\d+万'): "equal",
+                              re.compile(u'大于\d+万'): "greater",
+                              re.compile(u'小于\d+万'): "less",
+                              re.compile(u'\d+万左右'): "around",
+                              re.compile(u'\d{2}十万'): "between10",
+                              re.compile(u'\d{2}十万左右'): "between10"}
+        self._label_para = {"label": "",
+                            "value": "",
+                            "wordstr": "",
+                            "endindex": 0}
 
-    # -------------------------------------------------------------
-    # function: set labels in an input
-    # args: input -- inputstr eg: "长安c15"
-    # return: output -- input with labels eg: "carbrand长安<carmodel>c15"
-    # -------------------------------------------------------------
+        for index, row in self.patterndf.iterrows():
+            _, row["question"] = self.set_label(row["question"])
+
+    def price_process(self, wordstr):
+        wordstr = tool.num_process(wordstr)
+        value = wordstr
+        v = ""
+        num_re = re.compile(u'\d+')
+        num_one_re = re.compile(u'\d')
+        for m, v in self.price_pattern.iteritems():
+            if m.match(wordstr):
+                break
+        if v == "equal":
+            numl = num_re.findall(wordstr)
+            minn = int(numl[0]) - 5
+            maxn = int(numl[0]) + 5
+            value = str(minn) + '-' + str(maxn)
+        elif v == "between":
+            numl = num_re.findall(wordstr)
+            numl.sort()
+            minn = int(numl[0]) - 5
+            maxn = int(numl[1]) + 5
+            value = str(minn) + '-' + str(maxn)
+        elif v == "greater":
+            numl = num_re.findall(wordstr)
+            value = numl[0] + '-' + str(UTIMAXPRICE)
+        elif v == "less":
+            numl = num_re.findall(wordstr)
+            value = str(0) + "-" + numl[0]
+        elif v == "around":
+            numl = num_re.findall(wordstr)
+            basenum = int(numl[0])
+            value = str(basenum - 5) + '-' + str(basenum + 5)
+        elif v == "between10":
+            numl = num_one_re.findall(wordstr)
+            minn = int(numl[0]) * 10 - 5
+            maxn = int(numl[1]) * 10 + 5
+            value = str(minn) + '-' + str(maxn)
+        return value
+
+    def classify_word(self, word, strlist):
+        result, index, wordstr, endindex = tool.df_inlude_search(self.searchdf, strlist, "value", False)
+
+        if not result:
+            # logger.debug("[SETLABEL]False:(word)" + word)
+            return result
+        label = self.searchdf["label"][index]
+        if label == PRICE:
+            value = self.price_process(wordstr)
+        else:
+            value = wordstr
+
+        self._label_para["value"] = value
+        self._label_para["wordstr"] = wordstr
+        self._label_para["endindex"] = endindex
+        self._label_para["label"] = label
+        # logger.debug("[SETLABEL]TRUE :(word)" + wordstr + "(label)" + label + "(value)" + value)
+        return result
+
     # TODO:for price and model the include problem not solved, need to write a func for it
     def set_label(self, inputstr):
         labelrinput = inputstr
-        labelinput = ""
-        result = tool.cut_no_blank(inputstr)
-        for word in result:
-            label = [k for k, v in self.labeldict.iteritems() if word in v.values()]
-            if len(label) != 0:
-                labelrinput = labelrinput.replace(word, label[0], 1)
-                labelinput = labelinput + ' ' + label[0] + ' '
-            labelinput = labelinput + word
+        labelinput = inputstr
+        cutlist = tool.cut_no_blank(inputstr)
+        endindex = 0
+
+        for index in range(len(cutlist)):
+            if index < endindex:
+                continue
+            word = cutlist[index]
+            result = self.classify_word(word, cutlist[index:])
+            if result:
+                labelrinput = labelrinput.replace(self._label_para["wordstr"], self._label_para["label"], 1)
+                labelinput = labelinput.replace(self._label_para["wordstr"], self._label_para["label"] + " "
+                                                + self._label_para["value"] + " ", 1)
+                endindex = index + self._label_para["endindex"] + 1
+
         return labelinput, labelrinput
 
     def search(self, labelrinput):
         score = {"score": 0, "index": 0}
-        index = 0
-        for question in self.patterndf["question"].values:
-            _, labelrquestion = self.set_label(question)
-            tmpscore = fuzz.ratio(labelrquestion, labelrinput)
+        for index, row in self.patterndf.iterrows():
+            question = row["question"]
+            tmpscore = fuzz.ratio(question, labelrinput)
             if tmpscore > score["score"]:
                 score["score"] = tmpscore
                 score["index"] = index
             # TODO：improve log.py support showing specific log
             # logger.debug("labelrquestion is " + str(labelrquestion))
             # logger.debug("tmpscore is " + str(tmpscore))
-            index += 1
-        logger.debug("labelrinput max score is " + unicode(score["score"]))
+
+        logger.debug("[PATTERN]most likely pattern is " + self.patterndf["question"][score["index"]])
+        logger.debug("[PATTERN]pattern max score is " + str(score["score"]))
 
         if score["score"] > 50:
             return self.patterndf["category"][score["index"]]
         else:
             return None
 
-    def pattern_none(self, inputstr):
-        return inputstr
-
-    def pattern_welcome(self, input):
+    def pattern_welcome(self, inputstr):
         return "WELCOME"
 
     def pattern_query(self, labelinput):
@@ -83,36 +149,22 @@ class Analyze(object):
         output = "QUERY "
         outputl = []
         for word in inputl:
-            result, index = tool.df_inlude_search(self.normalizedf, word, "value")
-            logger.debug("pattern_query word is " + word + "inlude_search result is " + str(result))
+            strindex = inputl.index(word)
+            result, index, _, _ = tool.df_inlude_search(self.querydf, inputl[strindex:], "value", False)
             if result:
-                outputl = tool.insert_list_norepeat(outputl, self.normalizedf["label"][index])
+                logger.debug("[QUERY]word：" + word + " query label is " + self.querydf["label"][index])
+                outputl = tool.insert_list_norepeat(outputl, self.querydf["label"][index])
         output += json.dumps(outputl)
         return output
 
-    def special_price(self, inputstring):
-        pass
-
-    def special_carmodel(self, inputstring):
-        pass
-
-    # TODO:muliti search need to be added
-    # TODO:use json replace the data trans
     def pattern_search(self, labelinput):
-        inputl = tool.cut_no_blank(labelinput)
+        inputl = tool.cut(labelinput)
         output = "SEARCH "
         outputd = {}
-        index = 0
-
-        for word in inputl:
-            if word in self.special_key.keys():
-                s, inputl = self.special_key[word](inputl)
-                outputd[word] = unicode(s)
-            elif word in self.labeldict.keys():
-                # TODO: fuzzy match should be consider&design, now is too specific
-                outputd[word] = inputl[index + 1]
-            index += 1
-
+        for index in range(len(inputl)):
+            word = inputl[index]
+            if word in self.searchdf["label"].values:
+                outputd[word] = "".join(inputl[index+2: (index+2+inputl[index + 2:].index(" "))])
         output += json.dumps(outputd)
         return output
 
@@ -135,7 +187,7 @@ class Analyze(object):
     # return: output -- normalized input
     # -------------------------------------------------------------
     def normalize(self, inputstr):
-        logger.info("input: " + inputstr)
+        logger.info("[NORMALIZE]input: " + inputstr)
 
         try:
             labelinput, labelrinput = self.set_label(inputstr)
@@ -143,8 +195,8 @@ class Analyze(object):
             logger.critical("exception: " + unicode(Exception) + ":" + unicode(e))
             log.log_traceback()
             return
-        logger.info("input with label: " + labelinput)
-        logger.info("input replaced label: " + labelrinput)
+        logger.info("[NORMALIZE]input_with_label: " + labelinput)
+        logger.info("[NORMALIZE]input_repl_label: " + labelrinput)
 
         try:
             pattern = self.search(labelrinput)
@@ -152,7 +204,9 @@ class Analyze(object):
             logger.critical("exception: " + unicode(Exception) + ":" + unicode(e))
             log.log_traceback()
             return
-        logger.info("pattern: " + unicode(pattern))
+        logger.info("[NORMALIZE]pattern: " + unicode(pattern))
+        if pattern is None:
+            return inputstr
 
         try:
             output = self.gen_output(pattern, labelinput)
@@ -161,7 +215,7 @@ class Analyze(object):
             log.log_traceback()
             return
 
-        logger.info("normalize to aiml: " + str(output))
+        logger.info("[NORMALIZE]normalize to aiml: " + str(output))
         return output
 
 if __name__ == "__main__":

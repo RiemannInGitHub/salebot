@@ -21,7 +21,7 @@ class PatternMgr:
                 self._root = {}
                 self._templateCount = 0
                 self._botName = u"Nameless"
-                punctuation = u"`~!@#$%^&()-_=+\|;'<.>/?"
+                punctuation = u"`~!@#$%^&()-_=+\|;'/?"
                 self._puncStripRE = re.compile("[" + re.escape(punctuation) + "]", re.U) # FIXED: chinese unicode
                 self._whitespaceRE = re.compile("\s+", re.LOCALE | re.UNICODE)
 

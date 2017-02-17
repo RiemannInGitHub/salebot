@@ -4,6 +4,7 @@ import aimlcov.aimlbrain as aimlbrain
 import analyze
 import database
 import car
+import user
 import os
 import json
 import re
@@ -15,17 +16,24 @@ from util import log
 logger = log.get_logger(__name__)
 
 
+# the relationship between salebot, users and cars:
+# a salebot is create by server
+# a salebot like a host, can handle one user or multi users
+# multi users like a chat room, no clearly design yet
+# a salebot has one car to identify from db, the history find car can be saved in carlist attr
+# each user has a carlist attr to remember what car has been watched before
+# car contains the search para and search result, only search para be saved in carlist
 class SaleBot(object):
-    def __init__(self, userkey=None, currentcar=None,
+    def __init__(self, userid=None, carid=None,
                  aimlpath=os.path.split(os.path.realpath(__file__))[0] + "/aimlcov/load_aiml.xml"):
         self.__aiml = aimlbrain.AimlBrain(aimlpath)
-        self.username = ""
-        self.userkey = userkey
-        self.carlist = []
+        self.user = user.User(userid)
+        self.users = []
+        self.analyze = analyze.Analyze()
         self.database = database.Database()
-        self.analyze = analyze.Analyze(self.database.generate_attrdict())
         self.attrlist = self.database.generate_attrlist()
-        self.car = car.Car(self.attrlist)
+        self.car = car.Car(self.attrlist, carid)
+        self.carlist = []
         self.tuling = tuling.TulingBot()
         self.genargflag = False
         self.consernarg = []
@@ -45,19 +53,24 @@ class SaleBot(object):
     def msg_query_handle(self, keyl):
         output = ""
         for key in keyl:
-            lenth, value = self.database.get_label_value(key)
+            lenth, value = self.database.get_label_value(key, self.car.result)
             if 0 == lenth:
                 raise ValueError
             elif 1 == lenth:
-                vialist = [key, value[0]]
-                output += self.__aiml.respond_with_viable(vialist, DIALOG[QUERYFIN]) + ";"
+                output += self.__aiml.respond_with_viable([key, value[0]], DIALOG[QUERYFIN]) + ";"
             elif 1 < lenth:
-                if PRICE == key:
-                    pass
+                output += self.__aiml.respond_with_viable([key], DIALOG[MULTIKEY]) + ";"
+                carnum, carlist = self.database.get_label_value(CARMODEL, self.car.result)
+                output += self.__aiml.respond_with_viable([carnum], DIALOG[CARNUM]) + ";"
+                for index, row in self.car.result.iterrows():
+                    cardesc = row[CARBRAND] + row[CARNAME] + row[CARMODEL]
+                    cardesc = cardesc.replace(" ", "")
+                    vialist = [cardesc, key, row[key]]
+                    output += self.__aiml.respond_with_viable(vialist, DIALOG[MULTIRESULT]) + ";"
         return output
 
     def msg_tuling_handle(self, msg):
-        return 'tl' + self.tuling.tuling_auto_reply(msg)
+        return self.tuling.tuling_auto_reply(msg)
 
     def gen_consernarg(self, label, oldflag):
         if len(self.consernarg) != 0:
@@ -87,7 +100,7 @@ class SaleBot(object):
         tmpconsernarg = copy.deepcopy(self.consernarg)
         for k in tmpconsernarg:
             logger.debug("[SEARCH]process_consernarg consernarg is " + str(self.consernarg))
-            lenth, value = self.database.get_label_value(k)
+            lenth, value = self.database.get_label_value(k, self.car.result)
             logger.debug("[SEARCH]key " + k + " in database lenth is " + str(lenth) + " value is " + str(value))
             if 0 == lenth:
                 raise ValueError
@@ -106,7 +119,7 @@ class SaleBot(object):
                 self.genargflag = self.gen_consernarg(label, self.genargflag)
                 self.set_car_para(label, value)
                 self.__aiml.save_viable(label, value)
-        self.database.query_by_condition(self.car.parad, self.genargflag)
+        self.car.result = self.database.query_by_condition(self.car.parad, self.genargflag, self.car.result)
         self.process_consernarg()
 
         if 0 == len(self.consernarg):
@@ -134,7 +147,7 @@ class SaleBot(object):
             # TODO: add a decorator for log exception
             try:
                 msg = json.loads(string)
-                logger.debug("parse msg is:" + str(msg))
+                # logger.debug("parse msg is:" + str(msg))
             except Exception as e:
                 logger.critical("exception: " + unicode(Exception) + ":" + unicode(e))
                 log.log_traceback()
@@ -152,7 +165,6 @@ class SaleBot(object):
         else:
             output = response
 
-        logger.info("output: " + output)
         return output
 
     # -------------------------------------------------------------
@@ -171,7 +183,10 @@ class SaleBot(object):
             logger.error("in respond the normalinput is None")
             return ""
 
-        return self.respond_analyze(self.__aiml.respond(normalinput))
+        output = self.respond_analyze(self.__aiml.respond(normalinput))
+        logger.info("final output: " + output)
+        # TODO: output has 3 parts: userid, retcode, answer string
+        return output
 
 
 if __name__ == "__main__":

@@ -64,9 +64,10 @@ class MessageBuffer(object):
         if len(self.cache) > self.cache_size:
             self.cache = self.cache[-self.cache_size:]
 
-    def clear_cache(self):
-        self.cache = []
-
+    def clear_cache(self, user):
+        for index in range(len(self.cache)-1, -1, -1):
+            if user == self.cache[index]['username']:
+                self.cache.remove(self.cache[index])
 
 # Making this a non-singleton is left as an exercise for the reader.
 global_message_buffer = MessageBuffer()
@@ -75,7 +76,16 @@ global_manager = manager.Manager()
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render("index.html", messages=global_message_buffer.cache)
+        username = str(self.cookies)[-12:-1]
+        self.render("index.html", messages=self.generate_cache(username))
+
+    def generate_cache(self, username):
+        result = []
+        for message in global_message_buffer.cache:
+            if username == message['username']:
+                result.append(message)
+        return result
+
 
 
 class MessageNewHandler(tornado.web.RequestHandler):
@@ -97,7 +107,7 @@ class MessageNewHandler(tornado.web.RequestHandler):
         usermsg = {
             "id": str(uuid.uuid4()),
             "body": "User(" + self.username + "):" + inputstr,
-            "username": self.username
+            "username": self.username,
         }
         # to_basestring is necessary for Python 3's json encoder,
         # which doesn't accept byte strings.
@@ -110,6 +120,7 @@ class MessageNewHandler(tornado.web.RequestHandler):
         robotmsg = {
             "id": str(uuid.uuid4()),
             "body": "Robot:" + outputstr,
+            "username": self.username,
         }
         robotmsg["html"] = tornado.escape.to_basestring(
             self.render_string("message.html", message=robotmsg))
@@ -129,6 +140,7 @@ class MessageUpdatesHandler(tornado.web.RequestHandler):
         self.future = global_message_buffer.wait_for_messages(cursor=cursor, user=self.username)
         messages = yield self.future
         if self.request.connection.stream.closed():
+            # TODO: need to consider how to del bo use bot
             return
         self.write(dict(messages=messages))
 
@@ -138,7 +150,8 @@ class MessageUpdatesHandler(tornado.web.RequestHandler):
 
 class MessageClearcachHandler(tornado.web.RequestHandler):
     def get(self):
-        global_message_buffer.clear_cache()
+        username = str(self.cookies)[-12:-1]
+        global_message_buffer.clear_cache(username)
 
 
 def main():

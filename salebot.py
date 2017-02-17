@@ -165,7 +165,6 @@ class SaleBot(object):
         else:
             output = response
 
-        logger.info("final output: " + output)
         return output
 
     # -------------------------------------------------------------
@@ -184,7 +183,10 @@ class SaleBot(object):
             logger.error("in respond the normalinput is None")
             return ""
 
-        return self.respond_analyze(self.__aiml.respond(normalinput))
+        output = self.respond_analyze(self.__aiml.respond(normalinput))
+        logger.info("final output: " + output)
+        # TODO: output has 3 parts: userid, retcode, answer string
+        return output
 
 
 if __name__ == "__main__":

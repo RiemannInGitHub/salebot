@@ -60,7 +60,7 @@ ch.setLevel(logging.DEBUG)
 def get_logger(logger_name):
     loger = logging.getLogger(logger_name)
     loger.addHandler(fh)
-    # loger.addHandler(ch)
+    loger.addHandler(ch)
     loger.setLevel(logging.DEBUG)
     return loger
 

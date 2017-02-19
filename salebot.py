@@ -106,7 +106,7 @@ class SaleBot(object):
                 raise ValueError
             if PRICE == k or CARMODEL == k:
                 if lenth < 5:
-                    self.set_car_para(k, value[0])
+                    # self.set_car_para(k, value[0])
                     self.consernarg.remove(k)
             elif 1 == lenth:
                 self.set_car_para(k, value[0])

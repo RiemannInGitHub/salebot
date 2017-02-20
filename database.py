@@ -66,13 +66,13 @@ class Database(object):
         return result
 
     def fliter_dataframe(self, condition, df):
+        logger.debug("fliter condition is:" + str(condition))
         for k, v in condition.iteritems():
             if v != "":
                 if k == PRICE:
                     df = self.price_fliter(k, v, df)
                 else:
                     df = self.contain_filter(k, v, df)
-        logger.debug("fliter condition is:" + str(condition))
         logger.debug("database result change to:\n" + str(df))
         return df
 

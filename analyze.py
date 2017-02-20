@@ -27,7 +27,8 @@ class Analyze(object):
             "SEARCH": self.pattern_search,
             "FUZZYQUERY": self.pattern_fuzzyquery,
             "SEARCHQUERY": self.pattern_searchquery,
-            "COMPARE": self.pattern_compare
+            "COMPARE": self.pattern_compare,
+            "PARA": self.pattern_para,
         }
         self.price = ""
         self.price_pattern = {re.compile(u'\d+万到\d+万'): "between",
@@ -176,6 +177,17 @@ class Analyze(object):
 
     def pattern_compare(self, labelinput):
         pass
+
+    def pattern_para(self, labelinput):
+        inputl = tool.cut(labelinput)
+        output = "PARA "
+        outputd = {}
+        for index in range(len(inputl)):
+            word = inputl[index]
+            if word in self.searchdf["label"].values:
+                outputd[word] = "".join(inputl[index+2: (index+2+inputl[index + 2:].index(" "))])
+        output += json.dumps(outputd)
+        return output
 
     def gen_output(self, pattern, labelinput):
         gen_func = self.gen_funclist[pattern]

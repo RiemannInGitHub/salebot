@@ -32,6 +32,7 @@ class Analyze(object):
         }
         self.price = ""
         self.price_pattern = {re.compile(u'\d+万到\d+万'): "between",
+                              re.compile(u'\d+到\d+万'): "between",
                               re.compile(u'\d+万'): "equal",
                               re.compile(u'大于\d+万'): "greater",
                               re.compile(u'小于\d+万'): "less",
@@ -134,7 +135,7 @@ class Analyze(object):
             # logger.debug("labelrquestion is " + str(labelrquestion))
             # logger.debug("tmpscore is " + str(tmpscore))
 
-        logger.debug("[PATTERN]most likely pattern is " + self.patterndf["question"][score["index"]])
+        logger.debug("[PATTERN]most likely pattern is " + self.patterndf["category"][score["index"]])
         logger.debug("[PATTERN]pattern max score is " + str(score["score"]))
 
         if score["score"] > 50:

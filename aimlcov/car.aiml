@@ -118,10 +118,18 @@
             <star index="1"/>的<star index="2"/>是<star index="3"/>
         </template>
     </category>
-        <category>
+    <category>
         <!-- PARA * * use condition judge -->
         <pattern>PARA *</pattern>
-        <that>ASK SEATS</that>
+        <input>WELCOME</input>
+        <template>
+            {"DBSEARCH":<star index = "1"/>}
+        </template>
+    </category>
+    <category>
+        <!-- PARA * * use condition judge -->
+        <pattern>PARA *</pattern>
+        <input>ASK *</input>
         <template>
             {"DBSEARCH":<star index = "1"/>}
         </template>

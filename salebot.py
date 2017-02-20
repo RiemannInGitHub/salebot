@@ -42,7 +42,6 @@ class SaleBot(object):
             "SET":      self.msg_set_handle,
             "QUERY":    self.msg_query_handle,
             "DBSEARCH": self.msg_dbsearch_handle,
-            "TULING":   self.msg_tuling_handle,
         }
         logger.info("salebot start")
 
@@ -147,7 +146,6 @@ class SaleBot(object):
             # TODO: add a decorator for log exception
             try:
                 msg = json.loads(string)
-                # logger.debug("parse msg is:" + str(msg))
             except Exception as e:
                 logger.critical("exception: " + unicode(Exception) + ":" + unicode(e))
                 log.log_traceback()
@@ -162,6 +160,9 @@ class SaleBot(object):
                 else:
                     if output is None:
                         output = text
+        elif response.find("TULING") != -1:
+            response = response.replace("TULING", "", 1)
+            output = self.msg_tuling_handle(response)
         else:
             output = response
 

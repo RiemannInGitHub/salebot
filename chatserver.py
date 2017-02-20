@@ -8,6 +8,7 @@ import uuid
 import tornado.escape
 import tornado.ioloop
 import tornado.web
+import wordbot.manager as manager
 from tornado import gen
 from tornado.concurrent import Future
 from tornado.options import define, options, parse_command_line
@@ -15,8 +16,8 @@ from tornado.options import define, options, parse_command_line
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-sys.path.insert(0, "wordbot/")
-import manager
+
+
 
 define("port", default=8888, help="run on the given port", type=int)
 define("debug", default=True, help="run in debug mode")

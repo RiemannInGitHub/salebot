@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/env python
 import os
+import sys
+
+sys.path.insert(0, os.path.split(os.path.realpath(__file__))[0] + "/..")
 from third_party import aiml
 from util import log
 

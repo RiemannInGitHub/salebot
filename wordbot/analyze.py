@@ -5,6 +5,7 @@ import pandas as pd
 import json
 import sys
 import re
+import os
 from macro import *
 from util import log
 from util import tool
@@ -15,22 +16,25 @@ sys.setdefaultencoding('utf8')
 
 logger = log.get_logger(__name__)
 
+path = os.path.split(os.path.realpath(__file__))[0]
 
 class Analyze(object):
     def __init__(self):
-        self.patterndf = pd.read_csv("corpus/pattern.csv", encoding="utf_8")
-        self.querydf = pd.read_csv("corpus/querydict.csv", encoding="utf_8")
-        self.searchdf = pd.read_csv("corpus/searchdict.csv", encoding="utf_8")
+        self.patterndf = pd.read_csv(path + "/corpus/pattern.csv", encoding="utf_8")
+        self.querydf = pd.read_csv(path + "/corpus/querydict.csv", encoding="utf_8")
+        self.searchdf = pd.read_csv(path + "/corpus/searchdict.csv", encoding="utf_8")
         self.gen_funclist = {
             "WELCOME": self.pattern_welcome,
             "QUERY": self.pattern_query,
             "SEARCH": self.pattern_search,
             "FUZZYQUERY": self.pattern_fuzzyquery,
             "SEARCHQUERY": self.pattern_searchquery,
-            "COMPARE": self.pattern_compare
+            "COMPARE": self.pattern_compare,
+            "PARA": self.pattern_para,
         }
         self.price = ""
         self.price_pattern = {re.compile(u'\d+万到\d+万'): "between",
+                              re.compile(u'\d+到\d+万'): "between",
                               re.compile(u'\d+万'): "equal",
                               re.compile(u'大于\d+万'): "greater",
                               re.compile(u'小于\d+万'): "less",
@@ -133,7 +137,7 @@ class Analyze(object):
             # logger.debug("labelrquestion is " + str(labelrquestion))
             # logger.debug("tmpscore is " + str(tmpscore))
 
-        logger.debug("[PATTERN]most likely pattern is " + self.patterndf["question"][score["index"]])
+        logger.debug("[PATTERN]most likely pattern is " + self.patterndf["category"][score["index"]])
         logger.debug("[PATTERN]pattern max score is " + str(score["score"]))
 
         if score["score"] > 50:
@@ -176,6 +180,17 @@ class Analyze(object):
 
     def pattern_compare(self, labelinput):
         pass
+
+    def pattern_para(self, labelinput):
+        inputl = tool.cut(labelinput)
+        output = "PARA "
+        outputd = {}
+        for index in range(len(inputl)):
+            word = inputl[index]
+            if word in self.searchdf["label"].values:
+                outputd[word] = "".join(inputl[index+2: (index+2+inputl[index + 2:].index(" "))])
+        output += json.dumps(outputd)
+        return output
 
     def gen_output(self, pattern, labelinput):
         gen_func = self.gen_funclist[pattern]

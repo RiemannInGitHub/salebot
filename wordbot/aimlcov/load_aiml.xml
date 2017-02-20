@@ -1,0 +1,17 @@
+<aiml version="1.0">
+
+<category>
+    <pattern>LOAD AIML START</pattern>
+    <template>
+        <!-- Load AIML set -->
+        <learn>wordbot/aimlcov/message.aiml</learn>
+        <learn>wordbot/aimlcov/car.aiml</learn>
+        <learn>wordbot/aimlcov/robot.aiml</learn>
+        <!-- <learn>aimlcov/demo.aiml</learn>
+        <learn>message.aiml</learn>
+        <learn>car.aiml</learn>
+        <learn>robot.aiml</learn> -->
+    </template>
+</category>
+
+</aiml>

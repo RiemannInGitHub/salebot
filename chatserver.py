@@ -15,12 +15,16 @@ from tornado.options import define, options, parse_command_line
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-sys.path.insert(0, "../")
+sys.path.insert(0, "wordbot/")
 import manager
 
 define("port", default=8888, help="run on the given port", type=int)
 define("debug", default=True, help="run in debug mode")
 
+def get_user_ip(ip):
+    if ip == "::1":
+        ip = "localhost"
+    return ip
 
 class MessageBuffer(object):
     def __init__(self):
@@ -76,7 +80,7 @@ global_manager = manager.Manager()
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        username = str(self.cookies)[-12:-1]
+        username = get_user_ip(self.request.remote_ip)
         self.render("index.html", messages=self.generate_cache(username))
 
     def generate_cache(self, username):
@@ -91,7 +95,7 @@ class MainHandler(tornado.web.RequestHandler):
 class MessageNewHandler(tornado.web.RequestHandler):
 
     def post(self):
-        self.username = str(self.cookies)[-12:-1]
+        self.username = get_user_ip(self.request.remote_ip)
         logging.info("MessageNewHandler username is " + str(self.username))
         conver = self.generate_conv(self.get_argument("body"))
         if self.get_argument("next", None):
@@ -131,7 +135,7 @@ class MessageNewHandler(tornado.web.RequestHandler):
 class MessageUpdatesHandler(tornado.web.RequestHandler):
     @gen.coroutine
     def post(self):
-        self.username = str(self.cookies)[-12:-1]
+        self.username = get_user_ip(self.request.remote_ip)
         cursor = self.get_argument("cursor", None)
         logging.info("MessageUpdatesHandler cursor is " + str(cursor))
         # Save the future returned by wait_for_messages so we can cancel
@@ -150,7 +154,7 @@ class MessageUpdatesHandler(tornado.web.RequestHandler):
 
 class MessageClearcachHandler(tornado.web.RequestHandler):
     def get(self):
-        username = str(self.cookies)[-12:-1]
+        username = get_user_ip(self.request.remote_ip)
         global_message_buffer.clear_cache(username)
 
 
@@ -164,8 +168,8 @@ def main():
             (r"/a/message/clearcach", MessageClearcachHandler)
             ],
         cookie_secret="__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__",
-        template_path=os.path.join(os.path.dirname(__file__), "demo/boot_template"),
-        static_path=os.path.join(os.path.dirname(__file__), "demo/boot_static"),
+        template_path=os.path.join(os.path.dirname(__file__), "wordbot/demo/boot_template"),
+        static_path=os.path.join(os.path.dirname(__file__), "wordbot/demo/boot_static"),
         xsrf_cookies=False,
         debug=options.debug,
         )

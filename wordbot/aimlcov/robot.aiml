@@ -23,7 +23,7 @@
 <category>
     <pattern>*</pattern>
     <template>
-        {"TULING": "<star/>"}
+        TULING"<star/>"
     </template>
 </category>
 

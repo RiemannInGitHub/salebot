@@ -39,3 +39,7 @@ question,category
 有什么安全装备？,FUZZYQUERY
 内饰是什么样的？,FUZZYQUERY
 问下长安CS15的车现在怎么卖？,SEARCHQUERY
+20万,PARA
+长安,PARA
+CS15,PARA
+5座,PARA

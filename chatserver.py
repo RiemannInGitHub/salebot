@@ -15,7 +15,7 @@ from tornado.options import define, options, parse_command_line
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-sys.path.insert(0, "../")
+sys.path.insert(0, "wordbot/")
 import manager
 
 define("port", default=8888, help="run on the given port", type=int)
@@ -168,8 +168,8 @@ def main():
             (r"/a/message/clearcach", MessageClearcachHandler)
             ],
         cookie_secret="__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__",
-        template_path=os.path.join(os.path.dirname(__file__), "demo/boot_template"),
-        static_path=os.path.join(os.path.dirname(__file__), "demo/boot_static"),
+        template_path=os.path.join(os.path.dirname(__file__), "wordbot/demo/boot_template"),
+        static_path=os.path.join(os.path.dirname(__file__), "wordbot/demo/boot_static"),
         xsrf_cookies=False,
         debug=options.debug,
         )

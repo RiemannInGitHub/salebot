@@ -5,6 +5,7 @@ import pandas as pd
 import json
 import sys
 import re
+import os
 from macro import *
 from util import log
 from util import tool
@@ -15,12 +16,13 @@ sys.setdefaultencoding('utf8')
 
 logger = log.get_logger(__name__)
 
+path = os.path.split(os.path.realpath(__file__))[0]
 
 class Analyze(object):
     def __init__(self):
-        self.patterndf = pd.read_csv("corpus/pattern.csv", encoding="utf_8")
-        self.querydf = pd.read_csv("corpus/querydict.csv", encoding="utf_8")
-        self.searchdf = pd.read_csv("corpus/searchdict.csv", encoding="utf_8")
+        self.patterndf = pd.read_csv(path + "/corpus/pattern.csv", encoding="utf_8")
+        self.querydf = pd.read_csv(path + "/corpus/querydict.csv", encoding="utf_8")
+        self.searchdf = pd.read_csv(path + "/corpus/searchdict.csv", encoding="utf_8")
         self.gen_funclist = {
             "WELCOME": self.pattern_welcome,
             "QUERY": self.pattern_query,

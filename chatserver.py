@@ -1,9 +1,11 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import logging
 import os
 import sys
 import uuid
+import apiserver
 
 import tornado.escape
 import tornado.ioloop
@@ -11,16 +13,15 @@ import tornado.web
 import wordbot.manager as manager
 from tornado import gen
 from tornado.concurrent import Future
-from tornado.options import define, options, parse_command_line
+from tornado.options import define, options, parse_config_file
 
 reload(sys)
 sys.setdefaultencoding('utf8')
 
+define("port",default=8888, help="run on the given port", type=int)
+define("api_port",default=8080, help="run api on the given port", type=int)
+define("debug",default=True, help="run in debug mode")
 
-
-
-define("port", default=8888, help="run on the given port", type=int)
-define("debug", default=True, help="run in debug mode")
 
 def get_user_ip(ip):
     if ip == "::1":
@@ -160,7 +161,7 @@ class MessageClearcachHandler(tornado.web.RequestHandler):
 
 
 def main():
-    parse_command_line()
+    parse_config_file("server.conf")
     app = tornado.web.Application(
         [
             (r"/", MainHandler),
@@ -169,12 +170,14 @@ def main():
             (r"/a/message/clearcach", MessageClearcachHandler)
             ],
         cookie_secret="__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__",
-        template_path=os.path.join(os.path.dirname(__file__), "wordbot/demo/boot_template"),
-        static_path=os.path.join(os.path.dirname(__file__), "wordbot/demo/boot_static"),
+        template_path=os.path.join(os.path.dirname(__file__), "demo/boot_template"),
+        static_path=os.path.join(os.path.dirname(__file__), "demo/boot_static"),
         xsrf_cookies=False,
         debug=options.debug,
         )
     app.listen(options.port)
+    api = apiserver.Api()
+    api.listen()
     tornado.ioloop.IOLoop.current().start()
 
 

@@ -5,6 +5,7 @@ from util import log
 logger = log.get_logger(__name__)
 
 
+# TODO: auto delete bot while no using after 10 min
 class Manager(object):
     def __init__(self):
         self.salebotlist = []

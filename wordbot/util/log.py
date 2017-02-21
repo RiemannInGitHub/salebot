@@ -54,7 +54,7 @@ fh.setFormatter(color_formatter)
 fh.setLevel(logging.DEBUG)
 ch = logging.StreamHandler()
 ch.setFormatter(color_formatter)
-ch.setLevel(logging.DEBUG)
+ch.setLevel(logging.INFO)
 
 
 def get_logger(logger_name):
